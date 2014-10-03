@@ -22,10 +22,10 @@ SWEP.UseHands = true
 
 SWEP.Primary.Sound = Sound("weapons/rpg/single.wav")
 SWEP.Primary.Damage = 350
-SWEP.Primary.Delay = 6
+SWEP.Primary.Delay = 1.6
 SWEP.Primary.Recoil = 2
-SWEP.Primary.ClipSize = 1
-SWEP.Primary.DefaultClip = 2
+SWEP.Primary.ClipSize = 2
+SWEP.Primary.DefaultClip = 4
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "RPG"
 

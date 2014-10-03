@@ -37,6 +37,12 @@ Glow:Activate()
 self.Entity:SetNWBool("smoke", true)
 end   
 
+local remove = ENT.Remove
+function ENT:Remove()
+    self.Entity:StopSound("ignite_rpg")
+    return remove(self)
+end
+
 function ENT:Think()
 
   if self.timeleft < CurTime() then
@@ -61,6 +67,7 @@ function ENT:Think()
   end
 
   if tr.Hit then
+    if !tr.Entity:IsPlayer() or (tr.Entity:IsPlayer() and tr.Entity:Team() == TEAM_ZOMBIE) then
       util.BlastDamageExExceptAttacker(self.Entity, self.Owner, tr.HitPos, 450, self.Damage, DMG_BLAST)
       local trace = {}
       trace.filter = {self}
@@ -84,28 +91,31 @@ function ENT:Think()
             continue
           end
           if tr1.Entity == self.Owner then
-            tr1.Entity:ThrowFromPositionSetZ(tr1.StartPos, 450, nil, false)
+            tr1.Entity:ThrowFromPositionSetZ(tr1.StartPos, 250, 0.5, false)
+          elseif tr1.Entity:IsPlayer() and tr1.Entity:Team() == TEAM_ZOMBIE then
+            tr1.Entity:ThrowFromPositionSetZ(tr1.StartPos, 300, 0.38, false)
           else
-            tr1.Entity:ThrowFromPositionSetZ(tr1.StartPos, 100, nil, false)
+            tr1.Entity:ThrowFromPositionSetZ(tr1.StartPos, 800, nil, false)
           end
           table.insert(trace.filter, tr1.Entity)
         end
       end
-      local effectdata = EffectData()
-      effectdata:SetOrigin(tr.HitPos)			// Where is hits
-      effectdata:SetNormal(tr.HitNormal)		// Direction of particles
-      effectdata:SetEntity(self.Entity)		// Who done it?
-      effectdata:SetScale(1.8)			// Size of explosion
-      effectdata:SetRadius(tr.MatType)		// What texture it hits
-      effectdata:SetMagnitude(18)			// Length of explosion trails
-      util.Effect( "m9k_gdcw_cinematicboom", effectdata )
-      util.ScreenShake(tr.HitPos, 10, 5, 1, 3000 )
-      util.Decal("Scorch", tr.HitPos + tr.HitNormal, tr.HitPos - tr.HitNormal)
-      self.Entity:SetNWBool("smoke", false)
-      self.Entity:Remove()	
-      self.Entity:StopSound("ignite_rpg")
+        local effectdata = EffectData()
+        effectdata:SetOrigin(tr.HitPos)			// Where is hits
+        effectdata:SetNormal(tr.HitNormal)		// Direction of particles
+        effectdata:SetEntity(self.Entity)		// Who done it?
+        effectdata:SetScale(1.8)			// Size of explosion
+        effectdata:SetRadius(tr.MatType)		// What texture it hits
+        effectdata:SetMagnitude(18)			// Length of explosion trails
+        util.Effect( "explosion", effectdata )
+        util.ScreenShake(tr.HitPos, 10, 5, 1, 3000 )
+        util.Decal("Scorch", tr.HitPos + tr.HitNormal, tr.HitPos - tr.HitNormal)
+        self.Entity:SetNWBool("smoke", false)
+        self.Entity:StopSound("ignite_rpg")
+        self.Entity:Remove()
+      end
   end
-	self.Entity:SetPos(self.Entity:GetPos() + self.flightvector)
+	self.Entity:SetPos(self.Entity:GetPos() + self.flightvector / 15)
 	self.flightvector = self.flightvector - (self.flightvector/200) + Vector(math.Rand(-0.1,0.1), math.Rand(-0.1,0.1),math.Rand(-0.05,0.05)) + Vector(0,0,-0.111)
 	self.Entity:SetAngles(self.flightvector:Angle() + Angle(90,0,0))
 	self.Entity:NextThink( CurTime() )
