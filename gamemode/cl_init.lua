@@ -1236,7 +1236,6 @@ function GM:OnPlayerHitGround(pl, inwater, hitfloater, speed)
 			pl:RawCapLegDamage(CurTime() + math.min(2, speed * 0.0035) * (pl:Team() == TEAM_ZOMBIE and 1.5 or 1))
 		end
 	end
-
 	return true
 end
 

@@ -1,7 +1,7 @@
 AddCSLuaFile()
 
 if CLIENT then
-	SWEP.PrintName = "Manhack - Saw Attachment"
+	SWEP.PrintName = "톱날 맨핵"
 	SWEP.Description = "A modified manhack with a saw blade attachment.\nDoes significantly more damage and is more durable. Slightly less easy to control."
 end
 

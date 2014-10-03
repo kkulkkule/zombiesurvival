@@ -67,6 +67,22 @@ function ENT:Think()
 					detected = false
 				end
 			end
+			for _, v in pairs(ents.FindByClass("prop_manhack_saw")) do
+				local eobb = v:LocalToWorld(v:OBBCenter())
+				local dist = pos:Distance(eobb)
+				local moved = self.Moved
+				local vel = phys:GetVelocity()
+				local speed = 400 + 550 * (1 - self.Moved / self.MaxMove)
+				if dist <= 110 and self.Moved <= self.MaxMove then
+					detected = true
+					self.Dir = (eobb - pos):GetNormal()
+					-- PrintMessage(HUD_PRINTTALK, tostring(self.Dir:Angle():Up()))
+					self.Tracing = true
+					phys:SetVelocityInstantaneous(self.Dir * speed)
+				elseif dist > 340 and self.Tracing then
+					detected = false
+				end
+			end
 		else
 			phys:SetVelocityInstantaneous(VectorRand() * 1000)
 			self.Disabled = true
