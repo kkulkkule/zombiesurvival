@@ -4213,7 +4213,7 @@ function GM:WaveStateChanged(newstate)
 			end
 		end
 	end
-	WAVESTARTMUSICNEXT = math.max(self:GetWaveStart(), WAVESTARTMUSICNEXT)
+	WAVESTARTMUSICNEXT = CurTime()
 	gamemode.Call("OnWaveStateChanged")
 end
 

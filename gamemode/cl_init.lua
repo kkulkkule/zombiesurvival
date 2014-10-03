@@ -761,8 +761,8 @@ function GM:PlayBeats(teamid, fear)
 				self.LastHumanMusic = CreateSound(LocalPlayer(), self.LastHumanSound)
 				LASTHUMANMUSICNEXT = CurTime() + SoundDuration(self.LastHumanSound)
 			end
-			self.LastHumanMusic:ChangeVolume(self.BeatsVolume, 0)
 			self.LastHumanMusic:Play()
+			self.LastHumanMusic:ChangeVolume(self.BeatsVolume, 0)
 		end
 		return
 	end
@@ -1958,13 +1958,20 @@ net.Receive("zs_wavemusic", function(length)
 		if GAMEMODE.WaveMusic then
 			if GAMEMODE.WaveMusic:IsPlaying() then
 				GAMEMODE.WaveMusic:FadeOut(5)
+                timer.Create("StopWaveMusic", 5, 1, function()
+                    GAMEMODE.WaveMusic:Stop()
+                end)
 			end
 		end
 		GAMEMODE.WaveMusic = CreateSound(LocalPlayer(), "zombiesurvival/wavemusic/" .. music)
 		GAMEMODE.WaveMusic:Play()
+        GAMEMODE.WaveMusic:ChangeVolume(GAMEMODE.BeatsVolume, 0)
 		WAVESTARTMUSICNEXT = next
 	elseif GAMEMODE.WaveMusic then
 		GAMEMODE.WaveMusic:FadeOut(5)
+        timer.Create("StopWaveMusic", 5, 1, function()
+            GAMEMODE.WaveMusic:Stop()
+        end)
 	end
 end)
 
