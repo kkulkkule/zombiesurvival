@@ -39,7 +39,7 @@ function ENT:BuildUp(premium)
 	if self.BuildsThisTick < 3 then
 		self.BuildsThisTick = self.BuildsThisTick + 1
 		local adder = premium and 0.025 or 0
-		self:SetNestHealth(math.min(self:GetNestHealth() + FrameTime() * self:GetNestMaxHealth() * 0.025, self:GetNestMaxHealth()))
+		self:SetNestHealth(math.min(self:GetNestHealth() + FrameTime() * self:GetNestMaxHealth() * 0.025 + adder, self:GetNestMaxHealth()))
 	end
 end
 
