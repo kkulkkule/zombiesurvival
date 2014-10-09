@@ -81,40 +81,44 @@ function SWEP:OnMeleeHit(hitent, hitflesh, tr)
 			self:PlayRepairSound(hitent)
 			gamemode.Call("PlayerRepairedObject", self.Owner, hitent, healed, self)
 
-      if self.Owner.elabohandle then
-        math.randomseed(CurTime())
-        local percentage = math.random(1, 1000)
-        local point = 0
-        if percentage >= 500 and percentage <= 505 then
-          point = 5
-          -- counts[5] = counts[5] + 1
-        end
-        if percentage >= 120 and percentage <= 128 then
-          point = 4
-          -- counts[4] = counts[4] + 1
-        end
-        if percentage >= 220 and percentage <= 240 then
-          point = 3
-          -- counts[3] = counts[3] + 1
-        end
-        if percentage >= 600 and percentage <= 640 then
-          point = 2
-          -- counts[2] = counts[2] + 1
-        end
-        if percentage >= 800 and percentage <= 900 then
-          point = 1
-          -- counts[1] = counts[1] + 1
-        end
-        -- for i, v in pairs(counts) do
-          -- PrintMessage(HUD_PRINTTALK, tostring(i) .. "포인트: " .. tostring(v) .. "번 (실제로 " .. (v / count) * 100 .. "%)")
-        -- end
-        -- count = count + 1
-        -- PrintMessage(HUD_PRINTTALK, "총 횟수: " .. tostring(count))
-        if point > 0 then
-          self.Owner:AddPoints(point)
-          self.Owner:PrintMessage(HUD_PRINTTALK, "정교한 노루발: 바리케이드에서 재사용 가능한 부품을 얻었습니다. (" .. tostring(point) .. " 포인트)")
-        end
-      end
+            if self.Owner.elabohandle then
+                -- math.randomseed(CurTime())
+                local percentage = math.random(1, 1000)
+                local point = 0
+                if percentage >= 500 and percentage <= 505 then
+                    point = 5
+                    -- counts[5] = counts[5] + 1
+                end
+                if percentage >= 120 and percentage <= 128 then
+                    point = 4
+                    -- counts[4] = counts[4] + 1
+                end
+                if percentage >= 220 and percentage <= 240 then
+                    point = 3
+                    -- counts[3] = counts[3] + 1
+                end
+                if percentage >= 600 and percentage <= 640 then
+                    point = 2
+                    -- counts[2] = counts[2] + 1
+                end
+                if percentage >= 800 and percentage <= 900 then
+                    point = 1
+                    -- counts[1] = counts[1] + 1
+                end
+                -- for j = 1, 8 do 
+                        -- PrintMessage(HUD_PRINTTALK, " ")
+                    -- end
+                -- for i, v in pairs(counts) do
+                    
+                    -- PrintMessage(HUD_PRINTTALK, tostring(i) .. "포인트: " .. tostring(v) .. "번 (실제로 " .. (v / count) * 100 .. "%)")
+                -- end
+                -- count = count + 1
+                -- PrintMessage(HUD_PRINTTALK, "총 횟수: " .. tostring(count))
+                if point > 0 then
+                    self.Owner:AddPoints(point)
+                    self.Owner:PrintMessage(HUD_PRINTTALK, "정교한 노루발: 바리케이드에서 재사용 가능한 부품을 얻었습니다. (" .. tostring(point) .. " 포인트)")
+                end
+            end
       
 			local effectdata = EffectData()
 				effectdata:SetOrigin(tr.HitPos)
