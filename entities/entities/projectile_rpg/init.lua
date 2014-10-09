@@ -9,7 +9,7 @@ ENT.Spawnable			= false
 ENT.AdminSpawnable		= false
 
 ENT.Damage = 250
-ENT.BlastRadius = 450
+ENT.BlastRadius = 500
 
 AddCSLuaFile( "cl_init.lua" )
 
