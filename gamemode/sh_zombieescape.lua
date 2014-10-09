@@ -26,7 +26,7 @@ function GM:Move(pl, move)
 
 	local legdamage = pl:GetLegDamage()
 	if legdamage > 0 then
-		local scale = 1 - math.min(1, legdamage)
+		local scale = 1 - math.min(1, legdamage * 0.25)
 		move:SetMaxSpeed(move:GetMaxSpeed() * scale)
 		move:SetMaxClientSpeed(move:GetMaxClientSpeed() * scale)
 	end
