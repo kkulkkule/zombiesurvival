@@ -115,12 +115,12 @@ end
 function util.BlastDamageExExceptAttacker(inflictor, attacker, epicenter, radius, damage, damagetype)
 	local filter = inflictor
 	for _, ent in pairs(ents.FindInSphere(epicenter, radius)) do
-    if ent == attacker then
-      damage = damage / 16
-    end
+        if ent == attacker then
+            damage = damage / 16
+        end
 		local nearest = ent:NearestPoint(epicenter)
 		if TrueVisibleFilters(epicenter, nearest, inflictor, ent) then
-      ent:TakeSpecialDamage(((radius - nearest:Distance(epicenter)) / radius) * damage, damagetype, attacker, inflictor, nearest)
+            ent:TakeSpecialDamage(((radius - nearest:Distance(epicenter)) / radius) * damage, damagetype, attacker, inflictor, nearest)
 		end
 	end
 end
