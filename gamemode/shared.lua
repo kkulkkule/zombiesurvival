@@ -391,20 +391,20 @@ function GM:Move(pl, move)
 
 	local legdamage = pl:GetLegDamage()
 	if legdamage > 0 then
-		local scale = 1 - math.min(0.5, legdamage * 0.33) * mul * dsmul
+		local scale = 1 - math.min(1, legdamage * 0.33) * mul * dsmul
 		move:SetMaxSpeed(move:GetMaxSpeed() * scale)
 		move:SetMaxClientSpeed(move:GetMaxClientSpeed() * scale)
 	end
     
-    if pl:IsBunnyHopping() then
-        local vel = pl:GetVelocity()
-        local originz = Vector(0, 0, vel.z)
-        vel.z = 0
-        local mul = 300 - vel:Length()
-        vel.x = vel.x * -0.02
-        vel.y = vel.y * -0.02
-        pl:SetVelocity(vel + originz)
-    end
+    -- if pl:IsBunnyHopping() then
+        -- local vel = pl:GetVelocity()
+        -- local originz = Vector(0, 0, vel.z)
+        -- vel.z = 0
+        -- local mul = 300 - vel:Length()
+        -- vel.x = vel.x * -0.02
+        -- vel.y = vel.y * -0.02
+        -- pl:SetVelocity(vel + originz)
+    -- end
 end
 
 function GM:OnPlayerHitGround(pl, inwater, hitfloater, speed)
@@ -416,7 +416,7 @@ function GM:OnPlayerHitGround(pl, inwater, hitfloater, speed)
 		if pl:GetZombieClassTable().NoFallDamage then return true end
 		
 		if !pl:GetZombieClassTable().NoFallSlowdown then
-			pl:RawCapLegDamage(CurTime() + math.min(2, speed * 0.0035) * (pl:Team() == TEAM_ZOMBIE and 1.5 or 1))
+			pl:RawCapLegDamage(CurTime() + math.min(2, speed * 0.0035))
 		end
 	else
 		pl:PreventSkyCade()

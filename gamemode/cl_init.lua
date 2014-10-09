@@ -1231,11 +1231,11 @@ function GM:OnPlayerHitGround(pl, inwater, hitfloater, speed)
 		if pl:GetZombieClassTable().NoFallDamage then return true end
 
 		speed = math.max(0, speed - 200)
-
-		if !pl:GetZombieClassTable().NoFallSlowdown then
-			pl:RawCapLegDamage(CurTime() + math.min(2, speed * 0.0035) * (pl:Team() == TEAM_ZOMBIE and 1.5 or 1))
-		end
-	end
+    end
+   
+    if !pl:GetZombieClassTable().NoFallSlowdown then
+        pl:RawCapLegDamage(CurTime() + math.min(2, speed * 0.0035)) // * (pl:Team() == TEAM_ZOMBIE and 1.5 or 1))
+    end
 	return true
 end
 
@@ -1450,12 +1450,12 @@ function GM:_CreateMove(cmd)
 		return
 	end
 
-	-- if MySelf:GetLegDamage() >= 0.3 then
-		-- local buttons = cmd:GetButtons()
-		-- if bit.band(buttons, IN_JUMP) ~= 0 then
-			-- cmd:SetButtons(buttons - IN_JUMP)
-		-- end
-	-- end
+	if MySelf:GetLegDamage() >= 0.5 then
+		local buttons = cmd:GetButtons()
+		if bit.band(buttons, IN_JUMP) ~= 0 then
+			cmd:SetButtons(buttons - IN_JUMP)
+		end
+	end
 
 	if MySelf:Team() == TEAM_HUMAN then
 		if MySelf:Alive() then

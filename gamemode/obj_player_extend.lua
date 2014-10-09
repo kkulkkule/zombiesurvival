@@ -940,38 +940,38 @@ function meta:GetRight()
 	return self:SyncAngles():Right()
 end
 
-local maxbunnymul = 0.75
-function meta:IsBunnyHopping()
-    local t = self:Team()
-    if t == TEAM_HUMAN then 
-        local wep = self:GetActiveWeapon()
-        if IsValid(wep) and wep.WalkSpeed then
-            self.AllowedMaxSpeed = wep.WalkSpeed + wep.WalkSpeed * maxbunnymul
-        else
-            local walkspeed = self:GetWalkSpeed()
-            self.AllowedMaxSpeed = walkspeed + walkspeed * maxbunnymul
-        end
-    elseif t == TEAM_ZOMBIE then
-        local classtab = self:GetZombieClassTable()
-        if istable(classtab) then
-            if classtab.Name == "Fast Zombie" then
-                return false
-            end
-            if classtab.Speed then
-                self.AllowedMaxSpeed = classtab.Speed + classtab.Speed * maxbunnymul
-            else
-                local walkspeed = self:GetWalkSpeed()
-                self.AllowedMaxSpeed = walkspeed + walkspeed * maxbunnymul
-            end
-        else
-            local walkspeed = self:GetWalkSpeed()
-            self.AllowedMaxSpeed = walkspeed + walkspeed * maxbunnymul
-        end
-    end
-    local speed = self:GetVelocity()
-    speed.z = 0
-    if speed:Length() > (self.AllowedMaxSpeed or SPEED_NORMAL) and self:GetMoveType() ~= MOVETYPE_NOCLIP and !self:OnGround() and GAMEMODE:GetWave() ~= 0 then
-        return true
-    end
-    return false
-end
+-- local maxbunnymul = 0.75
+-- function meta:IsBunnyHopping()
+    -- local t = self:Team()
+    -- if t == TEAM_HUMAN then 
+        -- local wep = self:GetActiveWeapon()
+        -- if IsValid(wep) and wep.WalkSpeed then
+            -- self.AllowedMaxSpeed = wep.WalkSpeed + wep.WalkSpeed * maxbunnymul
+        -- else
+            -- local walkspeed = self:GetWalkSpeed()
+            -- self.AllowedMaxSpeed = walkspeed + walkspeed * maxbunnymul
+        -- end
+    -- elseif t == TEAM_ZOMBIE then
+        -- local classtab = self:GetZombieClassTable()
+        -- if istable(classtab) then
+            -- if classtab.Name == "Fast Zombie" then
+                -- return false
+            -- end
+            -- if classtab.Speed then
+                -- self.AllowedMaxSpeed = classtab.Speed + classtab.Speed * maxbunnymul
+            -- else
+                -- local walkspeed = self:GetWalkSpeed()
+                -- self.AllowedMaxSpeed = walkspeed + walkspeed * maxbunnymul
+            -- end
+        -- else
+            -- local walkspeed = self:GetWalkSpeed()
+            -- self.AllowedMaxSpeed = walkspeed + walkspeed * maxbunnymul
+        -- end
+    -- end
+    -- local speed = self:GetVelocity()
+    -- speed.z = 0
+    -- if speed:Length() > (self.AllowedMaxSpeed or SPEED_NORMAL) and self:GetMoveType() ~= MOVETYPE_NOCLIP and !self:OnGround() and GAMEMODE:GetWave() ~= 0 then
+        -- return true
+    -- end
+    -- return false
+-- end
