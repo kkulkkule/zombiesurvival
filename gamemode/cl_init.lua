@@ -1450,12 +1450,12 @@ function GM:_CreateMove(cmd)
 		return
 	end
 
-	if MySelf:GetLegDamage() >= 0.5 + (MySelf:Team() == TEAM_ZOMBIE and -0.3 or 0) then
-		local buttons = cmd:GetButtons()
-		if bit.band(buttons, IN_JUMP) ~= 0 then
-			cmd:SetButtons(buttons - IN_JUMP)
-		end
-	end
+	-- if MySelf:GetLegDamage() >= 0.5 then
+		-- local buttons = cmd:GetButtons()
+		-- if bit.band(buttons, IN_JUMP) ~= 0 then
+			-- cmd:SetButtons(buttons - IN_JUMP)
+		-- end
+	-- end
 
 	if MySelf:Team() == TEAM_HUMAN then
 		if MySelf:Alive() then
