@@ -8,6 +8,7 @@ end
 
 SWEP.Primary.Delay = 3.5
 
+SWEP.Primary.DelayMul = 1
 SWEP.ViewModel = "models/weapons/v_crowbar.mdl"
 SWEP.WorldModel = "models/weapons/w_crowbar.mdl"
 
@@ -25,9 +26,9 @@ function SWEP:PrimaryAttack()
 	self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
 	
 	if self.Owner:GetPremium() then
-		self.Primary.Delay = 3.25
+		self.Primary.Delay = 3.25 * self.Primary.DelayMul
 	else
-		self.Primary.Delay = 3.5
+		self.Primary.Delay = 3.5 * self.Primary.DelayMul
 	end
 
 	self.PukeLeft = 40
