@@ -371,8 +371,8 @@ function GM:Move(pl, move)
 	local dsmul = pl:GetNetworkedVar("ds_spdMul") or 1
 	if pl:Team() == TEAM_HUMAN then
 		if pl:GetBarricadeGhosting() then
-			move:SetMaxSpeed(36 * (premium and mul * 3 or 1))
-			move:SetMaxClientSpeed(36 * (premium and mul * 3 or 1))
+			move:SetMaxSpeed(36 * (premium and 3.5 or 1))
+			move:SetMaxClientSpeed(36 * (premium and 3.5 or 1))
 		elseif move:GetForwardSpeed() < 0 then
 			move:SetMaxSpeed(move:GetMaxSpeed() * (pl.SoB and 0.75 or 0.5) * mul)
 			move:SetMaxClientSpeed(move:GetMaxClientSpeed() * (pl.SoB and 0.75 or 0.5) * mul)

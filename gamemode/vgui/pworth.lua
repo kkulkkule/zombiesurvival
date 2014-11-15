@@ -38,9 +38,9 @@ local function CartDoClick(self, silent, force)
 			surface.PlaySound("buttons/button18.wav")
 		end
 		self:SetTooltip("즐겨찾기에 추가")
-		WorthRemaining = WorthRemaining + tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURNS) and 0.85 or (premium and tab.Category == ITEMCAT_RETURNS) and 1.15 or 1)
+		WorthRemaining = WorthRemaining + tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURNS) and 0.80 or (premium and tab.Category == ITEMCAT_RETURNS) and 1.20 or 1)
 	else
-		if WorthRemaining < tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURNS) and 0.85 or (premium and tab.Category == ITEMCAT_RETURNS) and 1.15 or 1) and not force then
+		if WorthRemaining < tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURNS) and 0.80 or (premium and tab.Category == ITEMCAT_RETURNS) and 1.20 or 1) and not force then
       chat.AddText("WorthRemaining \t tab.Worth")
 			surface.PlaySound("buttons/button8.wav")
 			return
@@ -51,7 +51,7 @@ local function CartDoClick(self, silent, force)
 			surface.PlaySound("buttons/button17.wav")
 		end
 		self:SetTooltip("즐겨찾기에서 제거")
-		WorthRemaining = WorthRemaining - tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURNS) and 0.85 or (premium and tab.Category == ITEMCAT_RETURNS) and 1.15 or 1)
+		WorthRemaining = WorthRemaining - tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURNS) and 0.80 or (premium and tab.Category == ITEMCAT_RETURNS) and 1.20 or 1)
 	end
 
 	pWorth.WorthLab:SetText("자금: ".. WorthRemaining)
@@ -450,7 +450,7 @@ function PANEL:SetWorthID(id)
 
 	if tab.Worth then
 		local premium = LocalPlayer():GetPremium()
-		self.PriceLabel:SetText(tostring(tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURNS) and 0.85 or (premium and tab.Category == ITEMCAT_RETURNS) and 1.15 or 1)).." 자금")
+		self.PriceLabel:SetText(tostring(tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURNS) and 0.80 or (premium and tab.Category == ITEMCAT_RETURNS) and 1.20 or 1)).." 자금")
 	else
 		self.PriceLabel:SetText("")
 	end
@@ -488,9 +488,9 @@ function PANEL:DoClick(silent, force)
 		if not silent then
 			surface.PlaySound("buttons/button18.wav")
 		end
-		WorthRemaining = WorthRemaining + tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURN) and 0.85 or (premium and tab.Category == ITEMCAT_RETURN) and 1.15 or 1)
+		WorthRemaining = WorthRemaining + tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURN) and 0.80 or (premium and tab.Category == ITEMCAT_RETURN) and 1.20 or 1)
 	else
-		if WorthRemaining < tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURN) and 0.85 or (premium and tab.Category == ITEMCAT_RETURN) and 1.15 or 1) and not force then
+		if WorthRemaining < tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURN) and 0.80 or (premium and tab.Category == ITEMCAT_RETURN) and 1.20 or 1) and not force then
 			surface.PlaySound("buttons/button8.wav")
 			return
 		end
@@ -498,7 +498,7 @@ function PANEL:DoClick(silent, force)
 		if not silent then
 			surface.PlaySound("buttons/button17.wav")
 		end
-		WorthRemaining = WorthRemaining - tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURN) and 0.85 or (premium and tab.Category == ITEMCAT_RETURN) and 1.15 or 1)
+		WorthRemaining = WorthRemaining - tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURN) and 0.80 or (premium and tab.Category == ITEMCAT_RETURN) and 1.20 or 1)
 	end
   
 	pWorth.WorthLab:SetText("자금: ".. WorthRemaining)

@@ -84,7 +84,7 @@ local function ItemPanelThink(self)
 	local itemtab = FindItem(self.ID)
 	local premium = LocalPlayer():GetPremium() or false
 	if itemtab then
-		local newstate = MySelf:GetPoints() >= math.ceil(itemtab.Worth * ((premium and itemtab.Category ~= ITEMCAT_RETURNS) and 0.85 or 1) * (GAMEMODE.m_PointsShop.m_LastNearArsenalCrate and GAMEMODE.ArsenalCrateMultiplier or 1)) and not (itemtab.NoClassicMode and GAMEMODE:IsClassicMode())
+		local newstate = MySelf:GetPoints() >= math.ceil(itemtab.Worth * ((premium and itemtab.Category ~= ITEMCAT_RETURNS) and 0.80 or 1) * (GAMEMODE.m_PointsShop.m_LastNearArsenalCrate and GAMEMODE.ArsenalCrateMultiplier or 1)) and not (itemtab.NoClassicMode and GAMEMODE:IsClassicMode())
 		if newstate ~= self.m_LastAbleToBuy then
 			self.m_LastAbleToBuy = newstate
 			if newstate then
@@ -208,7 +208,7 @@ function GM:OpenPointsShop()
 			list:SetWide(propertysheet:GetWide() - 16)
 			list:SetSpacing(2)
 			list:SetPadding(2)
-			local premium = LocalPlayer():GetNetworkedVar("hspremium") or false
+			local premium = LocalPlayer():GetPremium() or false
 			
 			for i, tab in ipairs(GAMEMODE.Items) do
 				if tab.Category == catid and tab.PointShop then
@@ -243,7 +243,7 @@ function GM:OpenPointsShop()
 					namelab:SetPos(42, itempan:GetTall() * 0.5 - namelab:GetTall() * 0.5)
 					itempan.m_NameLabel = namelab
 
-					local pricelab = EasyLabel(itempan, tostring(math.ceil(tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURNS) and 0.85 or 1))).." 포인트", "ZSHUDFontTiny")
+					local pricelab = EasyLabel(itempan, tostring(math.ceil(tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURNS) and 0.80 or 1))).." 포인트", "ZSHUDFontTiny")
 					pricelab:SetPos(itempan:GetWide() - 20 - pricelab:GetWide(), 4)
 					itempan.m_PriceLabel = pricelab
 

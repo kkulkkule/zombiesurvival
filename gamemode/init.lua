@@ -1987,7 +1987,7 @@ concommand.Add("zs_pointsshopbuy", function(sender, command, arguments)
 
 	local premium = sender:GetPremium() or false
 	local points = sender:GetPoints()
-	local cost = itemtab.Worth * ((premium and itemtab.Category ~= ITEMCAT_RETURNS) and 0.85 or 1)
+	local cost = itemtab.Worth * ((premium and itemtab.Category ~= ITEMCAT_RETURNS) and 0.80 or 1)
 	if not GAMEMODE:GetWaveActive() then
 		cost = cost * GAMEMODE.ArsenalCrateMultiplier
 	end
