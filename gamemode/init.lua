@@ -1987,7 +1987,7 @@ concommand.Add("zs_pointsshopbuy", function(sender, command, arguments)
 
 	local premium = sender:GetPremium() or false
 	local points = sender:GetPoints()
-	local cost = itemtab.Worth * ((premium and itemtab.Category ~= ITEMCAT_RETURNS) and 0.80 or 1)
+	local cost = itemtab.Worth * ((premium and itemtab.Category ~= ITEMCAT_RETURNS) and 0.80 or (premium and itemtab.Category == ITEMCAT_RETURNS) and 1.20 or 1)
 	if not GAMEMODE:GetWaveActive() then
 		cost = cost * GAMEMODE.ArsenalCrateMultiplier
 	end
@@ -2111,7 +2111,7 @@ concommand.Add("worthcheckout", function(sender, command, arguments)
 	for _, id in pairs(arguments) do
 		local tab = FindStartingItem(id)
 		if tab and not hasalready[id] then
-			cost = cost + tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURNS) and 0.85 or 1)
+			cost = cost + tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURNS) and 0.80 or (premium and tab.Category == ITEMCAT_RETURNS) and 1.20 or 1)
 			hasalready[id] = true
 		end
 	end
