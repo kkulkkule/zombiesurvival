@@ -13,6 +13,8 @@ CLASS.Speed = 175
 
 CLASS.Points = 4
 
+CLASS.JumpPower = 250
+
 CLASS.VoicePitch = 0.55
 
 CLASS.PainSounds = {Sound("npc/barnacle/barnacle_pull1.wav"), Sound("npc/barnacle/barnacle_pull2.wav"), Sound("npc/barnacle/barnacle_pull3.wav"), Sound("npc/barnacle/barnacle_pull4.wav")}
