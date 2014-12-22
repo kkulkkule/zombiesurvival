@@ -21,7 +21,7 @@ function SWEP:Think()
 	local owner = self.Owner
 	local premium = owner:GetPremium()
 	owner.m_PhoenixCount = owner.m_PhoenixCount or 0
-	if owner:KeyPressed(IN_ZOOM) and owner.m_PhoenixCount < self.MaxPhoenixCount then
+	if owner:KeyPressed(IN_USE) and owner.m_PhoenixCount < self.MaxPhoenixCount then
 		local td = {
 			start = self:GetPos(),
 			filter = {self.Owner, self},

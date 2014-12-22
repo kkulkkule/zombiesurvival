@@ -59,7 +59,6 @@ function SWEP:Think()
 			ent:SetOwner(pl)
 			ent:Spawn()
 
-			ent:SetTeamID(TEAM_UNDEAD)
 
 			local phys = ent:GetPhysicsObject()
 			if phys:IsValid() then
