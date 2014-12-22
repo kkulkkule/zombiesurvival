@@ -1447,26 +1447,26 @@ function GM:_CreateMove(cmd)
 	end
 
 	-- Disables bunny hopping to an extent.
-	if MySelf:GetLegDamage() >= 0.5 then
-		if PressingJump(cmd) then
-			DontPressJump(cmd)
-		end
-	elseif MySelf:OnGround() then
-		if CurTime() < BHopTime then
-			if PressingJump(cmd) then
-				DontPressJump(cmd)
-				WasPressingJump = true
-			end
-		elseif WasPressingJump then
-			if PressingJump(cmd) then
-				DontPressJump(cmd)
-			else
-				WasPressingJump = false
-			end
-		end
-	else
-		BHopTime = CurTime() + 0.065
-	end
+	-- if MySelf:GetLegDamage() >= 0.5 then
+		-- if PressingJump(cmd) then
+			-- DontPressJump(cmd)
+		-- end
+	-- elseif MySelf:OnGround() then
+		-- if CurTime() < BHopTime then
+			-- if PressingJump(cmd) then
+				-- DontPressJump(cmd)
+				-- WasPressingJump = true
+			-- end
+		-- elseif WasPressingJump then
+			-- if PressingJump(cmd) then
+				-- DontPressJump(cmd)
+			-- else
+				-- WasPressingJump = false
+			-- end
+		-- end
+	-- else
+		-- BHopTime = CurTime() + 0.065
+	-- end
 
 	if MySelf:Team() == TEAM_HUMAN then
 		if MySelf:Alive() then
