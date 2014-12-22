@@ -22,19 +22,6 @@ Board Kit model                  Samuel (samuel_games@hotmail.com)
 
  ZZZZZZZZZZZZZZZZZZZZZZZZZ
 ZZ                       ZZ
-ZZ  ABOUT THIS VERSION   ZZ
-ZZ                       ZZ
- ZZZZZZZZZZZZZZZZZZZZZZZZZ
-
-This is an SVN version of Zombie Survival. If you did not get this from an SVN then you probably have an older version than the one that's out.
-In order to prevent mishaps and immense stupidity, this version will always be kept a few updates behind the official server.
-We get an update, you get an update a few weeks old.
-
-IN OTHER WORDS, THIS VERSION WILL ALWAYS BE AN OLDER VERSION THAN THE ONE BEING PLAYED ON NOXIOUSNET. DEAL WITH IT.
-
-
- ZZZZZZZZZZZZZZZZZZZZZZZZZ
-ZZ                       ZZ
 ZZ        INSTALL        ZZ
 ZZ                       ZZ
  ZZZZZZZZZZZZZZZZZZZZZZZZZ
@@ -50,13 +37,13 @@ ZZ    RUNNING SERVERS    ZZ
 ZZ                       ZZ
  ZZZZZZZZZZZZZZZZZZZZZZZZZ
 
-1. Get srcds and configure it for garrysmod. I won't tell you how to do this, Google it.
+1. Get srcds and configure it for garrysmod (requires steamcmd).
 2. Put the zombiesurvival folder in garrysmod/gamemodes with all the other gamemode folders.
 3. Get some maps. ZS_ maps are plentiful on the Internet and the game also supports many other map types: CS:S, Zombie Mod, Zombie Horde, Zombie Panic! Source
 4. Either setup a custom voting script or use mapcycle_zombiesurvival.txt. Make a file called mapcycle_zombiesurvival.txt in base garrysmod folder. Put in names of maps without the .bsp ending. One per line.
 5. Make your auto-start batch file or whatever you use. The line should look like this:
 srcds.exe -port 27015 -console -game garrysmod -secure +ip 24.102.103.104 +hostport 27015 +gamemode zombiesurvival +maxplayers 32 +map zs_oldhouse +hostname "Your ZS Server"
-6. Run it. You now have a server. You may want to make use of sv_downloadurl unless your clients enjoy downloading your maps and resources at 14KB/s.
+6. Run it. You now have a server. See other guides on the web for setting up sv_downloadurl.
 
 
  ZZZZZZZZZZZZZZZZZZZZZZZZ
@@ -65,4 +52,4 @@ ZZ      LEGAL JARGON     ZZ
 ZZ                       ZZ
  ZZZZZZZZZZZZZZZZZZZZZZZZZ
 
-See license.txt
+See license file

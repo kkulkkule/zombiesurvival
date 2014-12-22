@@ -156,9 +156,6 @@ function GM:_RenderScreenspaceEffects()
 			end
 		elseif MySelf:Team() == TEAM_UNDEAD then
 			if self.m_ZombieVision then
-				if MySelf:GetPremium() then
-					tColorModZombieVision["$pp_colour_brightness"] = -0.03
-				end
 				DrawColorModify(tColorModZombieVision)
 			else
 				tColorModZombie["$pp_colour_colour"] = math_min(1, 0.25 + math_min(1, (CurTime() - self.LastTimeDead) * 0.5) * 1.75 * fear)

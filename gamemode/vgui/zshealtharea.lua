@@ -35,6 +35,8 @@ function PANEL:Init()
 		if lp:IsValid() then
 			return lp:GetPoisonDamage()
 		end
+
+		return 0
 	end
 	poisonstatus.MemberMaxValue = 50
 	poisonstatus:Dock(TOP)
@@ -49,14 +51,33 @@ function PANEL:Init()
 		if lp:IsValid() then
 			return lp:GetBleedDamage()
 		end
+
+		return 0
 	end
 	bleedstatus.MemberMaxValue = 20
 	bleedstatus:Dock(TOP)
 
+	local ghoultouchstatus = vgui.Create("ZSHealthStatus", contents)
+	ghoultouchstatus:SetTall(20)
+	ghoultouchstatus:SetAlpha(200)
+	ghoultouchstatus:SetColor(Color(255, 0, 0))
+	ghoultouchstatus:SetMemberName("GHOUL TOUCH!")
+	ghoultouchstatus.GetMemberValue = function(me)
+		local lp = LocalPlayer()
+		if lp:IsValid() then
+			local status = lp:GetStatus("ghoultouch")
+			if status and status:IsValid() then
+				return math.max(status.DieTime - CurTime(), 0)
+			end
+		end
+
+		return 0
+	end
+	ghoultouchstatus.MemberMaxValue = 10
+	ghoultouchstatus:Dock(TOP)
+
 	self:ParentToHUD()
 	self:InvalidateLayout()
-	
-	GAMEMODE.HealthHUD = self
 end
 
 function PANEL:PerformLayout()
@@ -117,22 +138,14 @@ function PANEL:Think()
 		self.BarricadeGhosting = math.Approach(self.BarricadeGhosting, lp:IsBarricadeGhosting() and 1 or 0, FrameTime() * 5)
 
 		local model = lp:GetModel()
-		local modelscale = lp:GetModelScale()
 		local ent = self.Entity
-		if not ent or not ent:IsValid() or model ~= ent:GetModel() or modelscale ~= ent:GetModelScale() then
+		if not ent or not ent:IsValid() or model ~= ent:GetModel() then
 			if IsValid(self.OverrideEntity) then
 				self.OverrideEntity:Remove()
 				self.OverrideEntity = nil
 			end
 
 			self:SetModel(model)
-
-			if IsValid(self.Entity) then
-				local mins, maxs = lp:GetRenderBounds()
-				self:SetCamPos(mins:Distance(maxs) * Vector(0, -0.9, 0.4))
-				self:SetLookAt((mins + maxs) / 2)
-				self.Entity:SetModelScale(modelscale, 0)
-			end
 		end
 
 		local overridemodel = lp.status_overridemodel
@@ -188,22 +201,26 @@ function PANEL:Paint()
 	if not lp:IsValid() then return end
 
 	local x, y = self:LocalToScreen(0, 0)
-	local ang = self.aLookAngle
 	local w, h = self:GetSize()
 	local health = self.Health
 	local entpos = ent:GetPos()
+	local mins, maxs = lp:OBBMins(), lp:OBBMaxs()
+	maxs.z = maxs.x * 4.5
+	local campos = mins:Distance(maxs) * Vector(0, -0.9, 0.4)
+	local lookat = (mins + maxs) / 2
+	local ang = (lookat - campos):Angle()
+	local modelscale = lp:GetModelScale()
+	if ent:GetModelScale() ~= modelscale then
+		ent:SetModelScale(modelscale, 0)
+	end
 
 	self:LayoutEntity(ent)
-
-	if not ang then
-		ang = (self.vLookatPos - self.vCamPos):Angle()
-	end
 
 	render.ModelMaterialOverride(matWhite)
 	render.SuppressEngineLighting(true)
 	cam.IgnoreZ(true)
 
-	cam.Start3D(self.vCamPos - ang:Forward() * 16, ang, self.fFOV * 0.75, x, y, w, h, 5, 4096)
+	cam.Start3D(campos - ang:Forward() * 16, ang, self.fFOV * 0.75, x, y, w, h, 5, 4096)
 		render.OverrideDepthEnable(true, false)
 		render.SetColorModulation(0, 0, self.BarricadeGhosting)
 		ent:DrawModel()
@@ -220,7 +237,7 @@ function PANEL:Paint()
 			render.OverrideDepthEnable(false)
 		cam.End3D()
 	end
-	cam.Start3D(self.vCamPos, ang, self.fFOV, x, y, w, h, 5, 4096)
+	cam.Start3D(campos, ang, self.fFOV, x, y, w, h, 5, 4096)
 
 	render.SetMaterial(matShadow)
 	render.DrawQuadEasy(entpos, Vector(0, 0, 1), 45, 90, colShadow)

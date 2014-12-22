@@ -17,7 +17,7 @@ function MakepEndBoard(winner)
 		pEndBoard = nil
 	end
 
-	local localwin = winner == TEAM_HUMAN and LocalPlayer():Team() == winner
+	local localwin = winner == TEAM_HUMAN and LocalPlayer():IsValid() and LocalPlayer():Team() == winner
 
 	local wid = 640
 
@@ -44,9 +44,9 @@ function MakepEndBoard(winner)
 
 	local subheading
 	if localwin then
-		subheading = EasyLabel(frame, "지금 이 순간을 위해 살아남았다!", "ZSHUDFontSmall", COLOR_WHITE)
+		subheading = EasyLabel(frame, "최후의 인간들이 끝까지 생존하였다!", "ZSHUDFontSmall", COLOR_WHITE)
 	else
-		subheading = EasyLabel(frame, "좀비 군단이 더욱 강력해졌다.", "ZSHUDFontSmall", COLOR_LIMEGREEN)
+		subheading = EasyLabel(frame, "이제 누구도 좀비 군단을 막을 수 없다!", "ZSHUDFontSmall", COLOR_LIMEGREEN)
 	end
 	subheading:SetPos(wid * 0.5 - subheading:GetWide() * 0.5, y)
 	y = y + subheading:GetTall() + 8

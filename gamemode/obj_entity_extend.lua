@@ -13,18 +13,23 @@ function meta:GetVolume()
 	return (maxs.x - mins.x) + (maxs.y - mins.y) + (maxs.z - mins.z)
 end
 
-function meta:TakeSpecialDamage(damage, damagetype, attacker, inflictor, hitpos)
+function meta:TakeSpecialDamage(damage, damagetype, attacker, inflictor, hitpos, damageforce)
 	attacker = attacker or self
 	if not attacker:IsValid() then attacker = self end
 	inflictor = inflictor or attacker
 	if not inflictor:IsValid() then inflictor = attacker end
 
+	local nearest = self:NearestPoint(inflictor:NearestPoint(self:LocalToWorld(self:OBBCenter())))
+
 	local dmginfo = DamageInfo()
 	dmginfo:SetDamage(damage)
 	dmginfo:SetAttacker(attacker)
 	dmginfo:SetInflictor(inflictor)
-	dmginfo:SetDamagePosition(hitpos or self:NearestPoint(inflictor:NearestPoint(self:LocalToWorld(self:OBBCenter()))))
+	dmginfo:SetDamagePosition(hitpos or nearest)
 	dmginfo:SetDamageType(damagetype)
+	if damageforce then
+		dmginfo:SetDamageForce(damageforce)
+	end
 	self:TakeDamageInfo(dmginfo)
 
 	return dmginfo
@@ -68,14 +73,6 @@ function meta:ResetBones(onlyscale)
 			self:ManipulateBonePosition(i, vector_origin)
 		end
 	end
-end
-
-function meta:SetTeamID(teamid)
-	self.TeamID = teamid
-end
-
-function meta:GetTeamID()
-	return self.Team and self:Team() or self.TeamID or 0
 end
 
 function meta:SetBarricadeHealth(m)
@@ -148,7 +145,7 @@ end
 local function barricadetimer(self, timername)
 	if self:IsValid() then
 		for _, e in pairs(ents.FindInBox(self:WorldSpaceAABB())) do
-			if e:IsPlayer() and e:Alive() then
+			if e and e:IsValid() and e:IsPlayer() and e:Alive() then
 				return
 			end
 		end
@@ -164,7 +161,7 @@ function meta:TemporaryBarricadeObject()
 	if self.IsBarricadeObject then return end
 
 	for _, e in pairs(ents.FindInBox(self:WorldSpaceAABB())) do
-		if e:IsPlayer() and e:Alive() then
+		if e and e:IsValid() and e:IsPlayer() and e:Alive() then
 			self.IsBarricadeObject = true
 			self:CollisionRulesChanged()
 
@@ -267,7 +264,7 @@ function meta:PoisonDamage(damage, attacker, inflictor, hitpos, noreduction)
 	local dmginfo = DamageInfo()
 
 	if self:IsPlayer() then
-		if self:Team() == TEAM_ZOMBIE then return end
+		if self:Team() == TEAM_UNDEAD then return end
 
 		if self.BuffResistant then
 			damage = damage / 2

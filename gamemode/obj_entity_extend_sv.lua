@@ -3,9 +3,13 @@ if not meta then return end
 
 function meta:GetDefaultBarricadeHealth()
 	local mass = 2
-	local phys = self:GetPhysicsObject()
-	if phys:IsValid() then
-		mass = phys:GetMass()
+	if self._OriginalMass then
+		mass = self._OriginalMass
+	else
+		local phys = self:GetPhysicsObject()
+		if phys:IsValid() then
+			mass = phys:GetMass()
+		end
 	end
 
 	return math.Clamp(mass * GAMEMODE.BarricadeHealthMassFactor + self:GetVolume() * GAMEMODE.BarricadeHealthVolumeFactor, GAMEMODE.BarricadeHealthMin, GAMEMODE.BarricadeHealthMax)
@@ -57,11 +61,6 @@ local function CheckItemCreated(self)
 
 	local tab = {}
 	for _, ent in pairs(ents.FindByClass("prop_ammo")) do
-		if not ent.PlacedInMap then
-			table.insert(tab, ent)
-		end
-	end
-	for _, ent in pairs(ents.FindByClass("prop_flashlightbattery")) do
 		if not ent.PlacedInMap then
 			table.insert(tab, ent)
 		end
@@ -254,7 +253,7 @@ end
 
 meta.OldSetPhysicsAttacker = meta.OldSetPhysicsAttacker or meta.SetPhysicsAttacker
 function meta:SetPhysicsAttacker(ent)
-	if self:GetClass() == "func_physbox" and ent:IsValid() then
+	if string.sub(self:GetClass(), 1, 12) == "func_physbox" and ent:IsValid() then
 		self.PBAttacker = ent
 		self.NPBAttacker = CurTime() + 1
 	end
@@ -371,7 +370,7 @@ end
 
 local function GetNailOwner(nail, filter)
 	for _, ent in pairs(ents.GetAll()) do
-		if ent ~= filter and ent.Nails then
+		if ent and ent ~= filter and ent.Nails and ent:IsValid() then
 			for __, n in pairs(ent.Nails) do
 				if n == nail then
 					return ent

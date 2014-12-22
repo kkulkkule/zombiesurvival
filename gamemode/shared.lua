@@ -61,6 +61,7 @@ include("workshopfix.lua")
 
 GM.EndRound = false
 GM.StartingWorth = CreateConVar("zs_startingworth", 200, FCVAR_SERVER_CAN_EXECUTE, "Set starting worth."):GetInt()
+
 GM.ZombieVolunteers = {}
 
 team.SetUp(TEAM_ZOMBIE, "좀비", Color(0, 255, 0, 255))
@@ -110,7 +111,7 @@ function GM:AddCustomAmmo()
 	game.AddAmmoType({name = "drone"})
 
 	game.AddAmmoType({name = "m249"})
-  game.AddAmmoType({name = "rpg"})
+	game.AddAmmoType({name = "rpg"})
 end
 
 function GM:CanRemoveOthersNail(pl, nailowner, ent)
@@ -172,7 +173,7 @@ function GM:SortZombieSpawnDistances(allplayers)
 	for _, pl in pairs(allplayers) do
 		if pl:IsBot() or pl:SteamID() == "BOT" then
 			pl._ZombieSpawnDistance = 9999999
-		elseif pl:Team() == TEAM_UNDEAD or pl:GetNetworkedBool("zs_alwaysvolunteer", false) then
+		elseif pl:Team() == TEAM_UNDEAD or pl:GetInfo("zs_alwaysvolunteer") == "1" then
 			pl._ZombieSpawnDistance = -1
 		elseif CLIENT or pl.LastNotAFK and CurTime() <= pl.LastNotAFK + 60 then
 			local plpos = pl:GetPos()
@@ -277,7 +278,7 @@ function GM:GetDynamicSpawnsOld(pl)
 end
 
 GM.DynamicSpawnDist = 400
-GM.DynamicSpawnDistBuild = 500
+GM.DynamicSpawnDistBuild = 650
 function GM:DynamicSpawnIsValid(nest, humans, allplayers)
 	if self:ShouldUseAlternateDynamicSpawn() then
 		return self:DynamicSpawnIsValidOld(nest, humans, allplayers)
@@ -388,50 +389,39 @@ function GM:Move(pl, move)
 		move:SetMaxSpeed(move:GetMaxSpeed() * dsmul)
 		move:SetMaxClientSpeed(move:GetMaxClientSpeed() * dsmul)
 	end
-
 	local legdamage = pl:GetLegDamage()
 	if legdamage > 0 then
 		local scale = 1 - math.min(1, legdamage * 0.33) * mul * dsmul
 		move:SetMaxSpeed(move:GetMaxSpeed() * scale)
 		move:SetMaxClientSpeed(move:GetMaxClientSpeed() * scale)
 	end
-    
-    -- if pl:IsBunnyHopping() then
-        -- local vel = pl:GetVelocity()
-        -- local originz = Vector(0, 0, vel.z)
-        -- vel.z = 0
-        -- local mul = 300 - vel:Length()
-        -- vel.x = vel.x * -0.02
-        -- vel.y = vel.y * -0.02
-        -- pl:SetVelocity(vel + originz)
-    -- end
 end
 
 function GM:OnPlayerHitGround(pl, inwater, hitfloater, speed)
 	if inwater then return true end
 
-	local isundead = (pl:Team() == TEAM_UNDEAD)
+	local isundead = pl:Team() == TEAM_UNDEAD
 
 	if isundead then
 		if pl:GetZombieClassTable().NoFallDamage then return true end
-		
-		if !pl:GetZombieClassTable().NoFallSlowdown then
-			pl:RawCapLegDamage(CurTime() + math.min(2, speed * 0.0035))
-		end
-	else
+	elseif SERVER then
 		pl:PreventSkyCade()
 	end
 
-	if SERVER then
-		if isundead then
-			speed = math.max(0, speed - 200)
+	if isundead then
+		speed = math.max(0, speed - 200)
+	end
+
+	local damage = (0.1 * (speed - 525)) ^ 1.45
+	if hitfloater then damage = damage / 2 end
+
+	if math.floor(damage) > 0 then
+		if damage >= 5 and (not isundead or not pl:GetZombieClassTable().NoFallSlowdown) then
+			pl:RawCapLegDamage(CurTime() + math.min(2, damage * 0.038))
 		end
 
-		local damage = (0.1 * (speed - 525)) ^ 1.45
-		if hitfloater then damage = damage / 2 end
-
-		if math.floor(damage) > 0 then
-			if 20 <= damage and damage < pl:Health() then
+		if SERVER then
+			if damage >= 30 and damage < pl:Health() then
 				pl:KnockDown(damage * 0.05)
 			end
 			pl:TakeSpecialDamage(damage, DMG_FALL, game.GetWorld(), game.GetWorld(), pl:GetPos())
@@ -491,7 +481,11 @@ function GM:CanPlaceNail(pl, tr)
 end
 
 function GM:CanRemoveNail(pl, nail)
-	return true
+	if nail.m_NailUnremovable then 
+		return false 
+	else
+		return true
+	end
 end
 
 function GM:GetDamageResistance(fearpower)
@@ -512,6 +506,8 @@ function GM:ShouldUseAlternateDynamicSpawn()
 end
 
 function GM:GetZombieDamageScale(pos, ignore)
+	if LASTHUMAN then return self.ZombieDamageMultiplier end
+
 	return self.ZombieDamageMultiplier * (1 - self:GetDamageResistance(self:GetFearMeterPower(pos, TEAM_UNDEAD, ignore)))
 end
 

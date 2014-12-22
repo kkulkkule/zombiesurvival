@@ -67,7 +67,6 @@ local function PurchaseDoClick(self)
 	if self.Callback then
 		self.Callback(LocalPlayer())
 	end
-
 	RunConsoleCommand("zs_pointsshopbuy", self.ID)
 end
 
@@ -209,7 +208,6 @@ function GM:OpenPointsShop()
 			list:SetSpacing(2)
 			list:SetPadding(2)
 			local premium = LocalPlayer():GetPremium() or false
-			
 			for i, tab in ipairs(GAMEMODE.Items) do
 				if tab.Category == catid and tab.PointShop then
 					local itempan = vgui.Create("DPanel")

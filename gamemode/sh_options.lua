@@ -73,8 +73,8 @@ GM.AmmoCache["ar2"] = 30 -- Assault rifles.
 GM.AmmoCache["alyxgun"] = 24 -- Not used.
 GM.AmmoCache["pistol"] = 12 -- Pistols.
 GM.AmmoCache["smg1"] = 30 -- SMG's and some rifles.
-GM.AmmoCache["357"] = 6 -- Rifles, especially of the sniper variety.
-GM.AmmoCache["xbowbolt"] = 4 -- Crossbows
+GM.AmmoCache["357"] = 7 -- Rifles, especially of the sniper variety.
+GM.AmmoCache["xbowbolt"] = 5 -- Crossbows
 GM.AmmoCache["buckshot"] = 8 -- Shotguns
 GM.AmmoCache["ar2altfire"] = 1 -- Not used.
 GM.AmmoCache["slam"] = 1 -- Force Field Emitters.
@@ -105,13 +105,21 @@ GM.AmmoResupply["ar2"] = 30
 GM.AmmoResupply["alyxgun"] = GM.AmmoCache["alyxgun"]
 GM.AmmoResupply["pistol"] = GM.AmmoCache["pistol"]
 GM.AmmoResupply["smg1"] = 40
-GM.AmmoResupply["357"] = 7
-GM.AmmoResupply["xbowbolt"] = 5
-GM.AmmoResupply["buckshot"] = 8
+GM.AmmoResupply["357"] = GM.AmmoCache["357"]
+GM.AmmoResupply["xbowbolt"] = GM.AmmoCache["xbowbolt"]
+GM.AmmoResupply["buckshot"] = GM.AmmoCache["buckshot"]
 GM.AmmoResupply["battery"] = 25
-GM.AmmoResupply["pulse"] = 30
+GM.AmmoResupply["pulse"] = GM.AmmoCache["pulse"]
 GM.AmmoResupply["m249"] = 120
 GM.AmmoResupply["rpg"] = 1
+
+
+
+
+
+-----------
+-- Worth --
+-----------
 
 GM:AddStartingItem("pshtr", "'피슈터' 권총", nil, ITEMCAT_GUNS, 40, "weapon_zs_peashooter")
 GM:AddStartingItem("btlax", "'배틀액스' 권총", nil, ITEMCAT_GUNS, 40, "weapon_zs_battleaxe")
@@ -150,10 +158,13 @@ GM:AddStartingItem("medgun", "메딕 건", nil, ITEMCAT_TOOLS, 45, "weapon_zs_me
 GM:AddStartingItem("150mkit", "150 메디컬 키트 에너지", "메디컬 키트 에너지를 150 회복한다.", ITEMCAT_TOOLS, 30, nil, function(pl) if SERVER then pl:GiveAmmo(150, "Battery", true) end end, "models/healthvial.mdl")
 GM:AddStartingItem("arscrate", "상점 상자", nil, ITEMCAT_TOOLS, 50, "weapon_zs_arsenalcrate").Countables = "prop_arsenalcrate"
 GM:AddStartingItem("resupplybox", "보급 상자", nil, ITEMCAT_TOOLS, 70, "weapon_zs_resupplybox").Countables = "prop_resupplybox"
-local item = GM:AddStartingItem("infturret", "적외선 터렛", nil, ITEMCAT_TOOLS, 75, "weapon_zs_gunturret")
-item.Countables = "prop_gunturret"
+local item = GM:AddStartingItem("infturret", "적외선 터렛", nil, ITEMCAT_TOOLS, 75, nil, function(pl)
+	pl:GiveEmptyWeapon("weapon_zs_gunturret")
+	pl:GiveAmmo(1, "thumper")
+	pl:GiveAmmo(250, "smg1")
+end)
+item.Countables = {"weapon_zs_gunturret", "prop_gunturret"}
 item.NoClassicMode = true
-
 GM:AddStartingItem("wrench", "메카닉 렌치", nil, ITEMCAT_TOOLS, 15, "weapon_zs_wrench").NoClassicMode = true
 GM:AddStartingItem("crphmr", "목수의 망치", nil, ITEMCAT_TOOLS, 45, "weapon_zs_hammer").NoClassicMode = true
 GM:AddStartingItem("6nails", "못", "바리케이드 건설에 필요한 못 열두 개.", ITEMCAT_TOOLS, 20, nil, function(pl) if SERVER then pl:GiveAmmo(12, "GaussEnergy", true) end end, "models/Items/BoxMRounds.mdl")
@@ -162,6 +173,8 @@ GM:AddStartingItem("spotlamp", "스팟 램프", nil, ITEMCAT_TOOLS, 25, "weapon_
 GM:AddStartingItem("msgbeacon", "메세지 비콘", nil, ITEMCAT_TOOLS, 10, "weapon_zs_messagebeacon").Countables = "prop_messagebeacon"
 local item = GM:AddStartingItem("manhack", "맨핵", nil, ITEMCAT_TOOLS, 60, "weapon_zs_manhack")
 item.Countables = "prop_manhack"
+
+--GM:AddStartingItem("ffemitter", "Force Field Emitter", nil, ITEMCAT_TOOLS, 60, "weapon_zs_ffemitter").Countables = "prop_ffemitter"
 
 GM:AddStartingItem("stone", "돌맹이", nil, ITEMCAT_OTHER, 5, "weapon_zs_stone")
 GM:AddStartingItem("grenade", "수류탄", nil, ITEMCAT_OTHER, 30, "weapon_zs_grenade")
@@ -223,8 +236,8 @@ GM:AddPointShopItem("akbar", "'아크바' 돌격소총", nil, ITEMCAT_GUNS, 80, 
 GM:AddPointShopItem("stalker", "'스토커' 돌격소총", nil, ITEMCAT_GUNS, 125, "weapon_zs_m4")
 GM:AddPointShopItem("inferno", "'인페르노' 돌격소총", nil, ITEMCAT_GUNS, 125, "weapon_zs_inferno")
 GM:AddPointShopItem("annabelle", "'애나벨' 소총", nil, ITEMCAT_GUNS, 100, "weapon_zs_annabelle")
-
 GM:AddPointShopItem("crossbow", "'임팰러' 크로스보우", nil, ITEMCAT_GUNS, 175, "weapon_zs_crossbow")
+
 
 GM:AddPointShopItem("sweeper", "'스위퍼' 샷건", nil, ITEMCAT_GUNS, 200, "weapon_zs_sweepershotgun")
 GM:AddPointShopItem("m249", "'전기톱' M249", nil, ITEMCAT_GUNS, 200, "weapon_zs_m249")
@@ -242,7 +255,6 @@ GM:AddPointShopItem("crossbowammo", "크로스보우 화살", nil, ITEMCAT_AMMO,
 GM:AddPointShopItem("pulseammo", "펄스 에너지", nil, ITEMCAT_AMMO, 7, nil, function(pl) if SERVER then pl:GiveAmmo(GAMEMODE.AmmoCache["pulse"] or 30, "pulse", true) end end, "models/Items/combine_rifle_ammo01.mdl")
 GM:AddPointShopItem("m249ammo", "M249 탄약 박스", nil, ITEMCAT_AMMO, 11, nil, function(pl) if SERVER then pl:GiveAmmo(GAMEMODE.AmmoCache["m249"] or 30, "m249", true) end end, "models/Items/combine_rifle_ammo01.mdl")
 GM:AddPointShopItem("rpgammo", "80mm HEAT (RPG) 1개", nil, ITEMCAT_AMMO, 10, nil, function(pl) if SERVER then pl:GiveAmmo(GAMEMODE.AmmoCache["rpg"] or 1, "rpg", true) end end, "models/props_junk/garbage_glassbottle001a.mdl")
-
 GM:AddPointShopItem("axe", "도끼", nil, ITEMCAT_MELEE, 20, "weapon_zs_axe")
 GM:AddPointShopItem("crowbar", "크로우바", nil, ITEMCAT_MELEE, 20, "weapon_zs_crowbar")
 GM:AddPointShopItem("stunbaton", "전기 충격기", nil, ITEMCAT_MELEE, 25, "weapon_zs_stunbaton")
@@ -250,12 +262,19 @@ GM:AddPointShopItem("knife", "칼", nil, ITEMCAT_MELEE, 5, "weapon_zs_swissarmyk
 GM:AddPointShopItem("shovel", "삽", nil, ITEMCAT_MELEE, 30, "weapon_zs_shovel")
 GM:AddPointShopItem("sledgehammer", "슬렛지 해머", nil, ITEMCAT_MELEE, 30, "weapon_zs_sledgehammer")
 
+
+
 GM:AddPointShopItem("crphmr", "목수의 망치", nil, ITEMCAT_TOOLS, 50, "weapon_zs_hammer").NoClassicMode = true
 GM:AddPointShopItem("board", "판자", nil, ITEMCAT_AMMO, 8, nil, function(pl) if SERVER then pl:GiveAmmo(GAMEMODE.AmmoCache["SniperRound"] or 1, "SniperRound", true) end end, "models/props_debris/wood_board06a.mdl").NoClassicMode = true
 GM:AddPointShopItem("wrench", "메카닉 렌치", nil, ITEMCAT_TOOLS, 25, "weapon_zs_wrench").NoClassicMode = true
 GM:AddPointShopItem("arsenalcrate", "상점 상자", nil, ITEMCAT_TOOLS, 50, "weapon_zs_arsenalcrate")
 GM:AddPointShopItem("resupplybox", "보급 상자", nil, ITEMCAT_TOOLS, 150, "weapon_zs_resupplybox")
-GM:AddPointShopItem("infturret", "적외선 터렛", nil, ITEMCAT_TOOLS, 50, "weapon_zs_gunturret").NoClassicMode = true
+local item = GM:AddPointShopItem("infturret", "적외선 터렛", nil, ITEMCAT_TOOLS, 50, nil, function(pl)
+	pl:GiveEmptyWeapon("weapon_zs_gunturret")
+	pl:GiveAmmo(1, "thumper")
+	pl:GiveAmmo(250, "smg1")
+end)
+item.NoClassicMode = true
 GM:AddPointShopItem("barricadekit", "'이지스' 바리케이드 키트", nil, ITEMCAT_TOOLS, 125, "weapon_zs_barricadekit")
 GM:AddPointShopItem("nail", "못", "못 한 개.", ITEMCAT_TOOLS, 3, nil, function(pl) if SERVER then pl:GiveAmmo(1, "GaussEnergy", true) end end, "models/crossbow_bolt.mdl").NoClassicMode = true
 GM:AddPointShopItem("50mkit", "50 메디컬 키트 에너지", "메디컬 키트 에너지를 50 충전한다. 메디컬 키트가 있어야 사용할 수 있다.", ITEMCAT_TOOLS, 30, nil, function(pl) if SERVER then pl:GiveAmmo(50, "Battery", true) end end, "models/healthvial.mdl")
@@ -285,8 +304,6 @@ GM:AddPointShopItem("markupgrade", "정찰병 키트", "마킹한 좀비는 더 
 
 GM:AddPointShopItem("grenade", "수류탄", nil, ITEMCAT_OTHER, 60, "weapon_zs_grenade")
 GM:AddPointShopItem("detpck", "C4", nil, ITEMCAT_OTHER, 70, "weapon_zs_detpack")
-
-
 -- These are the honorable mentions that come at the end of the round.
 
 local function genericcallback(pl, magnitude) return pl:Name(), magnitude end
@@ -311,42 +328,8 @@ GM.HonorableMentions[HM_SPAWNPOINT] = {Name = "소환사", String = "%s님께 %d
 GM.HonorableMentions[HM_CROWFIGHTER] = {Name = "까마귀 파이터", String = "%s님께서 %d마리의 까마귀를 전멸시키셨습니다.", Callback = genericcallback, Color = COLOR_WHITE}
 GM.HonorableMentions[HM_CROWBARRICADEDAMAGE] = {Name = "영리한 까마귀", String = "%s님께서 까마귀가 되어 바리케이드에 %d 데미지를 입히셨습니다.", Callback = genericcallback, Color = COLOR_LIMEGREEN}
 GM.HonorableMentions[HM_BARRICADEDESTROYER] = {Name = "바리케이드 디스트로이어", String = "%s님께서 바리케이드에 %d 데미지를 입히셨습니다.", Callback = genericcallback, Color = COLOR_LIMEGREEN}
-GM.HonorableMentions[HM_NESTDESTROYER] = {Name = "Nest Destroyer", String = "goes to %s for destroying %d nests.", Callback = genericcallback, Color = COLOR_LIMEGREEN}
-GM.HonorableMentions[HM_NESTMASTER] = {Name = "Nest Master", String = "goes to %s for having %d zombies spawn through their nest.", Callback = genericcallback, Color = COLOR_LIMEGREEN}
-
--- Handled in languages file.
-GM.ValidBeaconMessages = {
-	"message_beacon_1",
-	"message_beacon_2",
-	"message_beacon_3",
-	"message_beacon_4",
-	"message_beacon_5",
-	"message_beacon_6",
-	"message_beacon_7",
-	"message_beacon_8",
-	"message_beacon_9",
-	"message_beacon_10",
-	"message_beacon_11",
-	"message_beacon_12",
-	"message_beacon_13",
-	"message_beacon_14",
-	"message_beacon_15",
-	"message_beacon_16",
-	"message_beacon_17",
-	"message_beacon_18",
-	"message_beacon_19",
-	"message_beacon_20",
-	"message_beacon_21",
-	"message_beacon_22",
-	"message_beacon_23",
-	"message_beacon_24",
-	"message_beacon_25",
-	"message_beacon_26",
-	"message_beacon_27",
-	"message_beacon_28",
-	"message_beacon_29",
-	"message_beacon_30"
-}
+GM.HonorableMentions[HM_NESTDESTROYER] = {Name = "둥지 파괴자", String = "%s님께서 %d개의 둥지를 파괴했습니다.", Callback = genericcallback, Color = COLOR_LIMEGREEN}
+GM.HonorableMentions[HM_NESTMASTER] = {Name = "둥지 마스터", String = "%d마리의 좀비가 %s님의 둥지를 통해 스폰했습니다.", Callback = genericcallback, Color = COLOR_LIMEGREEN}
 
 -- Don't let humans use these models because they look like undead models. Must be lower case.
 GM.RestrictedModels = {
@@ -460,7 +443,6 @@ GM.AllLoseSound = Sound("zombiesurvival/Prototype2Resurrection.mp3")
 
 -- Sound played when humans survive.
 GM.HumanWinSound = Sound("zombiesurvival/BlackMesaBlastPit3.mp3")
-
 WAVESTARTMUSICS = {}
 for _, v in pairs(file.Find("sound/zombiesurvival/wavemusic/*", "GAME")) do
 	-- resource.AddFile("sound/zombiesurvival/wavemusic/" .. v)
@@ -510,6 +492,5 @@ WAVESTARTMUSICD = {
 }
 WAVESTARTMUSICNEXT = 0
 LASTHUMANMUSICNEXT = 0
-
 -- Sound played to a person when they die as a human.
 GM.DeathSound = Sound("music/stingers/HL1_stinger_song28.mp3")

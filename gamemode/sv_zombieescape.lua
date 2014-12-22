@@ -7,6 +7,8 @@ if not GM.ZombieEscape then return end
 
 table.insert(GM.CleanupFilter, "func_brush")
 table.insert(GM.CleanupFilter, "env_global")
+table.insert(GM.CleanupFilter, "info_player_terrorist")
+table.insert(GM.CleanupFilter, "info_player_counterterrorist")
 
 -- We need to fix these important entities.
 hook.Add("EntityKeyValue", "zombieescape", function(ent, key, value)
@@ -37,7 +39,7 @@ hook.Add("InitPostEntityMap", "zombieescape", function(fromze)
 	end
 
 	for _, ent in pairs(ents.GetAll()) do
-		if ent.ZEDelete then
+		if ent and ent.ZEDelete and ent:IsValid() then
 			ent:Remove()
 		end
 	end

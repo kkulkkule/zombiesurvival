@@ -30,7 +30,6 @@ local function CartDoClick(self, silent, force)
 	if not tab then return end
 	
 	local premium = LocalPlayer():GetPremium() or false
-
 	if self.On then
 		self.On = nil
 		self:SetImage("icon16/cart_add.png")
@@ -41,7 +40,6 @@ local function CartDoClick(self, silent, force)
 		WorthRemaining = WorthRemaining + tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURNS) and 0.80 or (premium and tab.Category == ITEMCAT_RETURNS) and 1.20 or 1)
 	else
 		if WorthRemaining < tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURNS) and 0.80 or (premium and tab.Category == ITEMCAT_RETURNS) and 1.20 or 1) and not force then
-      chat.AddText("WorthRemaining \t tab.Worth")
 			surface.PlaySound("buttons/button8.wav")
 			return
 		end
@@ -475,7 +473,7 @@ function PANEL:Paint(w, h)
 	end
 
 	draw.RoundedBox(8, 0, 0, w, h, outline)
-	draw.RoundedBox(4, 4, 4, w - 8, h - 8, COLOR_BLACK)
+	draw.RoundedBox(4, 4, 4, w - 8, h - 8, color_black)
 end
 
 function PANEL:DoClick(silent, force)
@@ -500,7 +498,7 @@ function PANEL:DoClick(silent, force)
 		end
 		WorthRemaining = WorthRemaining - tab.Worth * ((premium and tab.Category ~= ITEMCAT_RETURN) and 0.80 or (premium and tab.Category == ITEMCAT_RETURN) and 1.20 or 1)
 	end
-  
+
 	pWorth.WorthLab:SetText("자금: ".. WorthRemaining)
 	if WorthRemaining <= 0 then
 		pWorth.WorthLab:SetTextColor(COLOR_RED)

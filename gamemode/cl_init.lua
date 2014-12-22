@@ -1,9 +1,10 @@
 -- Sometimes persistent ones don't get created.
+-- Sometimes persistent ones don't get created.
 local dummy = CreateClientConVar("_zs_dummyconvar", 1, false, false)
 if !CREATECLIENTCONVARFIXED then
-	local oldCreateClientConVar = CreateClientConVar
-	function CreateClientConVar(...)
-		return oldCreateClientConVar(...) or dummy
+local oldCreateClientConVar = CreateClientConVar
+function CreateClientConVar(...)
+	return oldCreateClientConVar(...) or dummy
 	end
 	CREATECLIENTCONVARFIXED = true
 end
@@ -22,6 +23,7 @@ include("vgui/dteamcounter.lua")
 include("vgui/dmodelpanelex.lua")
 include("vgui/dammocounter.lua")
 include("vgui/dteamheading.lua")
+include("vgui/dmodelkillicon.lua")
 
 include("vgui/dexroundedpanel.lua")
 include("vgui/dexroundedframe.lua")
@@ -48,22 +50,20 @@ include("cl_hint.lua")
 
 include("cl_zombieescape.lua")
 
-include("cl_fix_emitters.lua")
-
 w, h = ScrW(), ScrH()
 
 MySelf = MySelf or NULL
 hook.Add("InitPostEntity", "GetLocal", function()
 	MySelf = LocalPlayer()
-	
+
 	GAMEMODE.HookGetLocal = GAMEMODE.HookGetLocal or (function(g) end)
 	gamemode.Call("HookGetLocal", MySelf)
 	RunConsoleCommand("initpostentity")
 end)
 
 -- Remove when model decal crash is fixed.
--- function util.Decal()
--- end
+function util.Decal()
+end
 
 -- Save on global lookup time.
 local render = render
@@ -131,7 +131,29 @@ local draw_SimpleTextBlurry = draw.SimpleTextBlurry
 local draw_SimpleTextBlur = draw.SimpleTextBlur
 local draw_GetFontHeight = draw.GetFontHeight
 
-local MedicalAuraDistance = 400
+local MedicalAuraDistance = 300
+
+GM.LifeStatsBrainsEaten = 0
+GM.LifeStatsHumanDamage = 0
+GM.LifeStatsBarricadeDamage = 0
+GM.InputMouseX = 0
+GM.InputMouseY = 0
+GM.LastTimeDead = 0
+GM.LastTimeAlive = 0
+GM.HeartBeatTime = 0
+GM.FOVLerp = 1
+GM.HurtEffect = 0
+GM.PrevHealth = 0
+GM.SuppressArsenalTime = 0
+GM.ZombieThirdPerson = false
+GM.Beats = {}
+
+GM.DeathFog = 0
+GM.FogStart = 0
+GM.FogEnd = 8000
+GM.FogRed = 30
+GM.FogGreen = 30
+GM.FogBlue = 30
 
 function GM:ClickedPlayerButton(pl, button)
 end
@@ -151,8 +173,6 @@ function GM:TopNotify(...)
 	end
 end
 
-GM.InputMouseX = 0
-GM.InputMouseY = 0
 function GM:_InputMouseApply(cmd, x, y, ang)
 	self.InputMouseX = x
 	self.InputMouseY = y
@@ -263,11 +283,11 @@ local function CheckIdle()
 		end
 	end
 end
-
 function GM:InitPostEntity()
 	if not self.HealthHUD then
 		self.HealthHUD = vgui.Create("ZSHealthArea")
 	end
+
 	self:LocalPlayerFound()
 
 	if not game.SinglePlayer() then
@@ -275,7 +295,7 @@ function GM:InitPostEntity()
 	end
 	
 	self:EvaluateFilmMode()
-	
+
 	timer.Simple(2, function() GAMEMODE:GetFogData() end)
 end
 
@@ -352,12 +372,6 @@ function GM:PostDrawSkyBox()
 	cam.End3D()
 end
 
-GM.DeathFog = 0
-GM.FogStart = 0
-GM.FogEnd = 8000
-GM.FogRed = 30
-GM.FogGreen = 30
-GM.FogBlue = 30
 function GM:GetFogData()
 	local fogstart, fogend = render.GetFogDistances()
 	local fogr, fogg, fogb = render.GetFogColor()
@@ -420,6 +434,8 @@ function GM:LocalPlayerFound()
 	self.InputMouseApply = self._InputMouseApply
 	self.GUIMousePressed = self._GUIMousePressed
 	self.HUDWeaponPickedUp = self._HUDWeaponPickedUp
+
+	LocalPlayer().LegDamage = 0
 
 	if render.GetDXLevel() >= 80 then
 		self.RenderScreenspaceEffects = self._RenderScreenspaceEffects
@@ -484,9 +500,6 @@ function GM:GetDynamicSpawning()
 	return not GetGlobalBool("DynamicSpawningDisabled", false)
 end
 
-GM.LastTimeDead = 0
-GM.LastTimeAlive = 0
-
 function GM:TrackLastDeath()
 	if MySelf:Alive() then
 		self.LastTimeAlive = CurTime()
@@ -531,10 +544,6 @@ function GM:PostRender()
 end
 
 local lastwarntim = -1
-GM.HeartBeatTime = 0
-GM.FOVLerp = 1
-GM.HurtEffect = 0
-GM.PrevHealth = 0
 GM.NextHeartbeat = 0
 
 function input.FindKeyCode(keyname)
@@ -544,7 +553,6 @@ function input.FindKeyCode(keyname)
     end
   end
 end
-
 local NextGas = 0
 local LastLocalVoiceCheck = 0
 local LastMarked = 0
@@ -634,7 +642,7 @@ function GM:_Think()
 	for _, pl in pairs(player.GetAll()) do
 		if pl:Team() == TEAM_UNDEAD then
 			local tab = pl:GetZombieClassTable()
-			if tab and tab.BuildBonePositions then
+			if tab.BuildBonePositions then
 				pl.WasBuildingBonePositions = true
 				pl:ResetBones()
 				tab.BuildBonePositions(tab, pl)
@@ -735,7 +743,6 @@ net.Receive("localvoice", function(len)
 		end
 	end
 end)
-
 function GM:ShouldPlayBeats(teamid, fear)
 	return not self.RoundEnded and not self.ZombieEscape and not GetGlobalBool("beatsdisabled", false)
 end
@@ -744,7 +751,7 @@ local cv_ShouldPlayMusic = CreateClientConVar("zs_playmusic", 1, true, false)
 local NextBeat = 0
 local LastBeatLevel = 0
 function GM:PlayBeats(teamid, fear)
-	if RealTime() <= LASTHUMANMUSICNEXT or not gamemode.Call("ShouldPlayBeats", teamid, fear) then return end
+	if CurTime() <= LASTHUMANMUSICNEXT or not gamemode.Call("ShouldPlayBeats", teamid, fear) then return end
 
 	if LASTHUMAN and cv_ShouldPlayMusic:GetBool() then
 		if self.WaveMusic then
@@ -759,6 +766,7 @@ function GM:PlayBeats(teamid, fear)
 				LASTHUMANMUSICNEXT = CurTime() + SoundDuration(Sound(sound))
 			else
 				self.LastHumanMusic = CreateSound(LocalPlayer(), self.LastHumanSound)
+		-- MySelf:EmitSound(self.LastHumanSound, 0, 100, self.BeatsVolume)
 				LASTHUMANMUSICNEXT = CurTime() + SoundDuration(self.LastHumanSound)
 			end
 			self.LastHumanMusic:Play()
@@ -776,7 +784,7 @@ function GM:PlayBeats(teamid, fear)
 
 	-- local snd = beats[LastBeatLevel]
 	-- if snd then
-		-- MySelf:EmitSound(snd, 0, 100, self.BeatsVolume * 2 / 3)
+		-- MySelf:EmitSound(snd, 0, 100, self.BeatsVolume)
 		-- NextBeat = RealTime() + (self.SoundDuration[snd] or SoundDuration(snd)) - 0.025
 	-- end
 end
@@ -948,7 +956,7 @@ function GM:ZombieHUD()
 	elseif not self:GetWaveActive() and not MySelf:Alive() then
 		draw_SimpleTextBlur(translate.Get("waiting_for_next_wave"), "ZSHUDFont", ScrW() * 0.5, ScrH() * 0.3, COLOR_DARKRED, TEXT_ALIGN_CENTER)
 
-		if MySelf:GetZombieClassTable() and MySelf:GetZombieClassTable().NeverAlive then
+		if MySelf:GetZombieClassTable().NeverAlive then
 			for _, ent in pairs(ents.FindByClass("prop_thrownbaby")) do
 				if ent:GetSettled() then
 					draw_SimpleTextBlur(translate.Format("press_walk_to_spawn_as_x", self.ZombieClasses["Gore Child"].Name), "ZSHUDFontSmall", w * 0.5, h * 0.75, COLOR_DARKRED, TEXT_ALIGN_CENTER)
@@ -1170,19 +1178,13 @@ function GM:CreateVGUI()
 	self.CenterNotificationHUD:ParentToHUD()
 end
 
-function GM:SetupPixVis()
-	self.PixVis = util.GetPixelVisibleHandle()
-end
-
 function GM:Initialize()
 	self:CreateFonts()
 	self:PrecacheResources()
 	self:CreateVGUI()
 	self:InitializeBeats()
 	self:AddCustomAmmo()
-	self:SetupPixVis()
 end
-
 
 local function FirstOfGoodType(a)
 	for _, v in pairs(a) do
@@ -1193,7 +1195,6 @@ local function FirstOfGoodType(a)
 	end
 end
 
-GM.Beats = {}
 function GM:InitializeBeats()
 	local _, dirs = file.Find("sound/zombiesurvival/beats/*", "GAME")
 	for _, dirname in pairs(dirs) do
@@ -1222,21 +1223,6 @@ function GM:InitializeBeats()
 end
 
 function GM:PlayerDeath(pl, attacker)
-end
-
-function GM:OnPlayerHitGround(pl, inwater, hitfloater, speed)
-	if inwater then return true end
-
-	if pl:Team() == TEAM_UNDEAD then
-		if pl:GetZombieClassTable().NoFallDamage then return true end
-
-		speed = math.max(0, speed - 200)
-    end
-   
-    if !pl:GetZombieClassTable().NoFallSlowdown then
-        pl:RawCapLegDamage(CurTime() + math.min(2, speed * 0.0035)) // * (pl:Team() == TEAM_ZOMBIE and 1.5 or 1))
-    end
-	return true
 end
 
 function GM:LastHuman(pl)
@@ -1356,7 +1342,6 @@ function GM:HumanMenu()
 	panel:OpenMenu()
 end
 
-GM.ZombieThirdPerson = false
 function GM:PlayerBindPress(pl, bind, wasin)
 	if bind == "gmod_undo" or bind == "undo" then
 		RunConsoleCommand("+zoom")
@@ -1444,18 +1429,44 @@ function GM:CalcViewTaunt(pl, origin, angles, fov, zclose, zfar)
 end
 
 local staggerdir = VectorRand():GetNormalized()
+local BHopTime = 0
+local WasPressingJump = false
+
+local function PressingJump(cmd)
+	return bit.band(cmd:GetButtons(), IN_JUMP) ~= 0
+end
+
+local function DontPressJump(cmd)
+	cmd:SetButtons(cmd:GetButtons() - IN_JUMP)
+end
+
 function GM:_CreateMove(cmd)
 	if MySelf:IsPlayingTaunt() and MySelf:Alive() then
 		self:CreateMoveTaunt(cmd)
 		return
 	end
 
-	-- if MySelf:GetLegDamage() >= 0.5 then
-		-- local buttons = cmd:GetButtons()
-		-- if bit.band(buttons, IN_JUMP) ~= 0 then
-			-- cmd:SetButtons(buttons - IN_JUMP)
-		-- end
-	-- end
+	-- Disables bunny hopping to an extent.
+	if MySelf:GetLegDamage() >= 0.5 then
+		if PressingJump(cmd) then
+			DontPressJump(cmd)
+		end
+	elseif MySelf:OnGround() then
+		if CurTime() < BHopTime then
+			if PressingJump(cmd) then
+				DontPressJump(cmd)
+				WasPressingJump = true
+			end
+		elseif WasPressingJump then
+			if PressingJump(cmd) then
+				DontPressJump(cmd)
+			else
+				WasPressingJump = false
+			end
+		end
+	else
+		BHopTime = CurTime() + 0.065
+	end
 
 	if MySelf:Team() == TEAM_HUMAN then
 		if MySelf:Alive() then
@@ -1488,6 +1499,11 @@ function GM:_CreateMove(cmd)
 			end
 		end
 	else
+		local buttons = cmd:GetButtons()
+		if bit.band(buttons, IN_ZOOM) ~= 0 then
+			cmd:SetButtons(buttons - IN_ZOOM)
+		end
+
 		MySelf:CallZombieFunction("CreateMove", cmd)
 	end
 end
@@ -1538,7 +1554,7 @@ function GM:_PrePlayerDraw(pl)
 	if pl.status_overridemodel and pl.status_overridemodel:IsValid() and self:ShouldDrawLocalPlayer(MySelf) then -- We need to do this otherwise the player's real model shows up for some reason.
 		undomodelblend = true
 		render.SetBlend(0)
-	elseif MySelf:Team() == TEAM_HUMAN and pl ~= MySelf and pl:Team() == TEAM_HUMAN then
+	elseif MySelf:Team() == TEAM_HUMAN and pl ~= MySelf and pl:Team() == TEAM_HUMAN and not self.MedicalAura then
 		local radius = self.TransparencyRadius
 		if radius > 0 then
 			local eyepos = EyePos()
@@ -1780,7 +1796,6 @@ function GM:CloseWorth()
 	end
 end
 
-GM.SuppressArsenalTime = 0
 function GM:SuppressArsenalUpgrades(suppresstime)
 	self.SuppressArsenalTime = math.max(CurTime() + suppresstime, self.SuppressArsenalTime)
 end
@@ -1915,21 +1930,14 @@ net.Receive("zs_wavestart", function(length)
 		GAMEMODE:CenterNotify({killicon = "default"}, {font = "ZSHUDFont"}, " ", COLOR_RED, translate.Get("final_wave"), {killicon = "default"})
 		GAMEMODE:CenterNotify(translate.Get("final_wave_sub"))
 	else
-		local UnlockedClasses = {}
-		for i, tab in ipairs(GAMEMODE.ZombieClasses) do
-			if tab.Wave <= wave and not tab.Unlocked then
-				tab.Unlocked = true
-				UnlockedClasses[#UnlockedClasses + 1] = translate.Get(tab.TranslationName)
-			end
-		end
-
 		GAMEMODE:CenterNotify({killicon = "default"}, {font = "ZSHUDFont"}, " ", COLOR_RED, translate.Format("wave_x_has_begun", wave), {killicon = "default"})
-		if #UnlockedClasses > 0 then
-			GAMEMODE:CenterNotify(COLOR_GREEN, translate.Format("x_unlocked", string.AndSeparate(UnlockedClasses)))
-		end
 	end
 
 	surface_PlaySound("ambient/creatures/town_zombie_call1.wav")
+end)
+
+net.Receive("zs_classunlock", function(length)
+	GAMEMODE:CenterNotify(COLOR_GREEN, net.ReadString())
 end)
 
 net.Receive("zs_waveend", function(length)
@@ -1973,7 +1981,6 @@ net.Receive("zs_wavemusic", function(length)
         end)
 	end
 end)
-
 net.Receive("zs_gamestate", function(length)
 	local wave = net.ReadInt(16)
 	local wavestart = net.ReadFloat()
@@ -2100,7 +2107,6 @@ end)
 net.Receive("zs_mark_failed", function(len)
   MsgC(Color(255, 0, 0), "마킹 실패: " .. CurTime() .. "\n")
 end)
-
 -- Temporary fix
 function render.DrawQuadEasy(pos, dir, xsize, ysize, color, rotation)
 	xsize = xsize / 2
@@ -2116,8 +2122,4 @@ function render.DrawQuadEasy(pos, dir, xsize, ysize, color, rotation)
 	local rightoffset = ang:Right() * xsize
 
 	render.DrawQuad(pos - upoffset - rightoffset, pos - upoffset + rightoffset, pos + upoffset + rightoffset, pos + upoffset - rightoffset, color)
-end
-
-if GAMEMODE then
-	RunConsoleCommand("initpostentity")
 end

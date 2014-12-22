@@ -63,6 +63,10 @@ function ENT:Use(activator, caller)
 	local weptype = self:GetWeaponType()
 	if not weptype then return end
 
+	if self.lastOwner != activator and self.lastHolded + 5 >= CurTime() then
+		return
+	end
+	
 	if activator:HasWeapon(weptype) and not GAMEMODE.MaxWeaponPickups then
 		local wep = activator:GetWeapon(weptype)
 		if wep:IsValid() then

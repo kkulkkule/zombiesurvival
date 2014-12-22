@@ -60,6 +60,19 @@ function TrueVisibleFilters(posa, posb, ...)
 	return not util.TraceLine({start = posa, endpos = posb, filter = filt, mask = MASK_SHOT}).Hit
 end
 
+MASK_SHOT_OPAQUE = bit.bor(MASK_SHOT, CONTENTS_OPAQUE)
+-- Literally if photon particles can reach point b from point a.
+function LightVisible(posa, posb, ...)
+	local filter = {}
+	if ... ~= nil then
+		for k, v in pairs({...}) do
+			filter[#filter + 1] = v
+		end
+	end
+
+	return not util.TraceLine({start = posa, endpos = posb, mask = MASK_SHOT_OPAQUE, filter = filter}).Hit
+end
+
 function WorldVisible(posa, posb)
 	return not util.TraceLine({start = posa, endpos = posb, mask = MASK_SOLID_BRUSHONLY}).Hit
 end
@@ -105,22 +118,11 @@ end
 function util.BlastDamageEx(inflictor, attacker, epicenter, radius, damage, damagetype)
 	local filter = inflictor
 	for _, ent in pairs(ents.FindInSphere(epicenter, radius)) do
-		local nearest = ent:NearestPoint(epicenter)
-		if TrueVisibleFilters(epicenter, nearest, inflictor, ent) then
-			ent:TakeSpecialDamage(((radius - nearest:Distance(epicenter)) / radius) * damage, damagetype, attacker, inflictor, nearest)
-		end
-	end
-end
-
-function util.BlastDamageExExceptAttacker(inflictor, attacker, epicenter, radius, damage, damagetype)
-	local filter = inflictor
-	for _, ent in pairs(ents.FindInSphere(epicenter, radius)) do
-        if ent == attacker then
-            damage = damage / 16
-        end
-		local nearest = ent:NearestPoint(epicenter)
-		if TrueVisibleFilters(epicenter, nearest, inflictor, ent) then
-            ent:TakeSpecialDamage(((radius - nearest:Distance(epicenter)) / radius) * damage, damagetype, attacker, inflictor, nearest)
+		if ent and ent:IsValid() then
+			local nearest = ent:NearestPoint(epicenter)
+			if TrueVisibleFilters(epicenter, nearest, inflictor, ent) then
+				ent:TakeSpecialDamage(((radius - nearest:Distance(epicenter)) / radius) * damage, damagetype, attacker, inflictor, nearest)
+			end
 		end
 	end
 end
@@ -129,12 +131,26 @@ function util.BlastDamage2(inflictor, attacker, epicenter, radius, damage)
 	util.BlastDamageEx(inflictor, attacker, epicenter, radius, damage, DMG_BLAST)
 end
 
+function util.FindValidInSphere(pos, radius)
+	local ret = {}
+	
+	for _, ent in pairs(util.FindInSphere(pos, radius)) do
+		if ent and ent:IsValid() then
+			ret[#ret + 1] = ent
+		end
+	end
+
+	return ret
+end
+
 function util.PoisonBlastDamage(inflictor, attacker, epicenter, radius, damage, noreduce)
 	local filter = inflictor
 	for _, ent in pairs(ents.FindInSphere(epicenter, radius)) do
-		local nearest = ent:NearestPoint(epicenter)
-		if TrueVisibleFilters(epicenter, nearest, inflictor, ent) then
-			ent:PoisonDamage(((radius - nearest:Distance(epicenter)) / radius) * damage, attacker, inflictor, nil, noreduce)
+		if ent and ent:IsValid() then
+			local nearest = ent:NearestPoint(epicenter)
+			if TrueVisibleFilters(epicenter, nearest, inflictor, ent) then
+				ent:PoisonDamage(((radius - nearest:Distance(epicenter)) / radius) * damage, attacker, inflictor, nil, noreduce)
+			end
 		end
 	end
 end

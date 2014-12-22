@@ -237,8 +237,6 @@ function PANEL:Init()
 
 	self.m_PingMeter = vgui.Create("DPingMeter", self)
 	self.m_PingMeter.PingBars = 5
-	
-	self.m_Premium = vgui.Create("DImage", self)
 
 	self.m_Mute = vgui.Create("DImageButton", self)
 	self.m_Mute.DoClick = MuteDoClick
@@ -305,10 +303,6 @@ function PANEL:PerformLayout()
 	self.m_Mute:SetSize(16, 16)
 	self.m_Mute:MoveLeftOf(self.m_PingMeter, 8)
 	self.m_Mute:CenterVertical()
-	
-	self.m_Premium:SetSize(16, 16)
-	self.m_Premium:MoveLeftOf(self.m_Mute, 8)
-	self.m_Premium:CenterVertical()
 end
 
 function PANEL:Refresh()
@@ -371,11 +365,6 @@ function PANEL:SetPlayer(pl)
 		else
 			self.m_SpecialImage:SetTooltip()
 			self.m_SpecialImage:SetVisible(false)
-		end
-		
-		if pl:GetPremium() then
-			self.m_Premium:SetImage("hspremium/score_icon")
-			self.m_Premium:SetTooltip("프리미엄")
 		end
 	else
 		self.m_Avatar:SetVisible(false)
