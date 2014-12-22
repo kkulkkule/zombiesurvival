@@ -12,6 +12,8 @@ SWEP.Primary.DefaultClip = -1
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "none"
 SWEP.Primary.Delay = 1
+SWEP.Primary.DelayMul = 1
+SWEP.Primary.DelayMulEnd = 0
 
 SWEP.MeleeDamage = 30
 SWEP.MeleeRange = 65
@@ -113,7 +115,10 @@ end
 
 function SWEP:PrimaryAttack()
 	if not self:CanPrimaryAttack() then return end
-	self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
+	if self.Primary.DelayMulEnd < CurTime() then
+		self.Primary.DelayMul = 1
+	end
+	self:SetNextPrimaryFire(CurTime() + self.Primary.Delay * self.Primary.DelayMul)
 
 	if self.SwingTime == 0 then
 		self:MeleeSwing()

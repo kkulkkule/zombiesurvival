@@ -12,6 +12,8 @@ SWEP.CSMuzzleFlashes = true
 
 SWEP.Primary.ClipSize = 8
 SWEP.Primary.DefaultClip = 0
+SWEP.Primary.DelayMul = 1
+SWEP.Primary.DelayMulEnd = 0
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "pistol"
 SWEP.RequiredClip = 1
@@ -135,7 +137,10 @@ end
 
 function SWEP:PrimaryAttack()
 	if not self:CanPrimaryAttack() then return end
-	self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
+	if self.Primary.DelayMulEnd or 0 < CurTime() then
+		self.Primary.DelayMul = 1
+	end
+	self:SetNextPrimaryFire(CurTime() + self.Primary.Delay * self.Primary.DelayMul)
 
 	self:EmitFireSound()
 	self:TakeAmmo()

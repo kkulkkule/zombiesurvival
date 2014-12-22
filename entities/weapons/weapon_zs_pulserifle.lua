@@ -26,7 +26,7 @@ SWEP.CSMuzzleFlashes = false
 
 SWEP.ReloadSound = Sound("Weapon_SMG1.Reload")
 SWEP.Primary.Sound = Sound("Airboat.FireGunHeavy")
-SWEP.Primary.Damage = 34
+SWEP.Primary.Damage = 29
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Delay = 0.2
 SWEP.Primary.Recoil = 1.45
@@ -49,6 +49,11 @@ function SWEP.BulletCallback(attacker, tr, dmginfo)
 	local ent = tr.Entity
 	if ent:IsValid() and ent:IsPlayer() and ent:Team() == TEAM_UNDEAD then
 		ent:AddLegDamage(4)
+		wep = ent:GetActiveWeapon()
+		if IsValid(wep) and wep.Primary then
+			wep.Primary.DelayMul = 1.5
+			wep.Primary.DelayMulEnd = CurTime() + 0.8
+		end
 	end
 
 	local e = EffectData()

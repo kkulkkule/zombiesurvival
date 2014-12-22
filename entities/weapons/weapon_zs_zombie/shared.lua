@@ -18,6 +18,8 @@ SWEP.Primary.DefaultClip = -1
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "none"
 SWEP.Primary.Delay = 1.2
+SWEP.Primary.DelayMulEnd = 0
+SWEP.Primary.DelayMul = 1
 
 SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = -1
@@ -203,7 +205,11 @@ end
 function SWEP:PrimaryAttack()
 	if CurTime() < self:GetNextPrimaryFire() or IsValid(self.Owner.FeignDeath) then return end
 
-	self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
+	if (self.Primary.DelayMulEnd or 0) < CurTime() then
+		self.Primary.DelayMul = 1
+	end
+	self:SetNextPrimaryFire(CurTime() + self.Primary.Delay * self.Primary.DelayMul)
+	
 	self:SetNextSecondaryFire(self:GetNextPrimaryFire() + 0.5)
 
 	self:StartSwinging()

@@ -63,7 +63,7 @@ function ENT:Use(activator, caller)
 	local weptype = self:GetWeaponType()
 	if not weptype then return end
 
-	if self.lastOwner != activator and self.lastHolded + 5 >= CurTime() then
+	if self.lastOwner != activator and (self.lastHolded or 0) + 5 >= CurTime() then
 		return
 	end
 	
