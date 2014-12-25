@@ -688,9 +688,6 @@ function GM:IsSpecialPerson(pl, image)
 	elseif pl:IsAdmin() then
 		img = "VGUI/servers/icon_robotron"
 		tooltip = "어드민"
-	elseif pl:IsNoxSupporter() then
-		img = "noxiousnet/noxicon.png"
-		tooltip = "Nox Supporter"
 	end
 
 	if img then
