@@ -21,7 +21,7 @@ SWEP.WorldModel				= "models/bmsweapons/w_bmrpg.mdl"
 SWEP.UseHands = true
 
 SWEP.Primary.Sound = Sound("weapons/rpg/single.wav")
-SWEP.Primary.Damage = 350
+SWEP.Primary.Damage = 175
 SWEP.Primary.Delay = 1.6
 SWEP.Primary.Recoil = 2
 SWEP.Primary.ClipSize = 2
@@ -56,7 +56,7 @@ function SWEP:FireRocket()
 	if SERVER then
 	local rocket = ents.Create("projectile_rpg")
 	if !rocket:IsValid() then return false end
-  rocket.Damage = self.Primary.Damage
+	rocket.Damage = self.Primary.Damage
 	rocket:SetAngles(aim:Angle()+Angle(90,0,0))
 	rocket:SetPos(pos)
 	rocket:SetOwner(self.Owner)
