@@ -254,7 +254,7 @@ GM:AddPointShopItem("rifleammo", "소총 탄약 박스", nil, ITEMCAT_AMMO, 7, n
 GM:AddPointShopItem("crossbowammo", "크로스보우 화살", nil, ITEMCAT_AMMO, 5, nil, function(pl) if SERVER then pl:GiveAmmo(1, "XBowBolt", true) end end, "models/Items/CrossbowRounds.mdl")
 GM:AddPointShopItem("pulseammo", "펄스 에너지", nil, ITEMCAT_AMMO, 7, nil, function(pl) if SERVER then pl:GiveAmmo(GAMEMODE.AmmoCache["pulse"] or 30, "pulse", true) end end, "models/Items/combine_rifle_ammo01.mdl")
 GM:AddPointShopItem("m249ammo", "M249 탄약 박스", nil, ITEMCAT_AMMO, 11, nil, function(pl) if SERVER then pl:GiveAmmo(GAMEMODE.AmmoCache["m249"] or 30, "m249", true) end end, "models/Items/combine_rifle_ammo01.mdl")
-GM:AddPointShopItem("rpgammo", "80mm HEAT (RPG) 1개", nil, ITEMCAT_AMMO, 16, nil, function(pl) if SERVER then pl:GiveAmmo(GAMEMODE.AmmoCache["rpg"] or 1, "rpg", true) end end, "models/props_junk/garbage_glassbottle001a.mdl")
+GM:AddPointShopItem("rpgammo", "80mm HEAT (RPG) 1개", nil, ITEMCAT_AMMO, 14, nil, function(pl) if SERVER then pl:GiveAmmo(GAMEMODE.AmmoCache["rpg"] or 1, "rpg", true) end end, "models/props_junk/garbage_glassbottle001a.mdl")
 GM:AddPointShopItem("axe", "도끼", nil, ITEMCAT_MELEE, 20, "weapon_zs_axe")
 GM:AddPointShopItem("crowbar", "크로우바", nil, ITEMCAT_MELEE, 20, "weapon_zs_crowbar")
 GM:AddPointShopItem("stunbaton", "전기 충격기", nil, ITEMCAT_MELEE, 25, "weapon_zs_stunbaton")
