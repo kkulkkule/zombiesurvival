@@ -270,9 +270,11 @@ GM:AddPointShopItem("wrench", "메카닉 렌치", nil, ITEMCAT_TOOLS, 25, "weapo
 GM:AddPointShopItem("arsenalcrate", "상점 상자", nil, ITEMCAT_TOOLS, 50, "weapon_zs_arsenalcrate")
 GM:AddPointShopItem("resupplybox", "보급 상자", nil, ITEMCAT_TOOLS, 150, "weapon_zs_resupplybox")
 local item = GM:AddPointShopItem("infturret", "적외선 터렛", nil, ITEMCAT_TOOLS, 50, nil, function(pl)
-	pl:GiveEmptyWeapon("weapon_zs_gunturret")
-	pl:GiveAmmo(1, "thumper")
-	pl:GiveAmmo(250, "smg1")
+	if SERVER then
+		pl:GiveEmptyWeapon("weapon_zs_gunturret")
+		pl:GiveAmmo(1, "thumper")
+		pl:GiveAmmo(250, "smg1")
+	end
 end)
 item.NoClassicMode = true
 GM:AddPointShopItem("barricadekit", "'이지스' 바리케이드 키트", nil, ITEMCAT_TOOLS, 125, "weapon_zs_barricadekit")
