@@ -938,3 +938,7 @@ end
 function meta:GetSerge()
 	return self:GetNetworkedVar("Serge")
 end
+
+function meta:SetSerge(b)
+	return self:SetNetworkedVar("Serge", b)
+end
