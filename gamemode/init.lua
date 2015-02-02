@@ -2288,8 +2288,9 @@ function GM:EntityTakeDamage(ent, dmginfo)
 	if IsValid(attacker) and attacker:IsPlayer() and attacker:Team() == TEAM_ZOMBIE and IsValid(ent) and ent:IsPlayer() and ent:Team() == TEAM_HUMAN then
 		local serge = ent:GetSerge()
 		if serge and serge > 0 then
-			local dmg = dmginfo:GetDamage()
-			dmginfo:SetDamage(math.max(dmg - serge, 0))
+			dmginfo:ScaleDamage(0.75)
+			serge = math.max(serge - (dmginfo:GetDamage()), 0)
+			ent:SetSerge(serge)
 		end
 	end
 	
