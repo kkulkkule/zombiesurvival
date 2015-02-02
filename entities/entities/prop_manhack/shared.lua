@@ -14,11 +14,11 @@ ENT.ControllerClass = "weapon_zs_manhackcontrol"
 ENT.AmmoType = "manhack"
 
 ENT.Acceleration = 320
-ENT.MaxSpeed = 280
+ENT.MaxSpeed = 315
 ENT.HoverSpeed = 64
 ENT.HoverHeight = 48
-ENT.HoverForce = 64
-ENT.TurnSpeed = 180
+ENT.HoverForce = 96
+ENT.TurnSpeed = 305
 ENT.IdleDrag = 1
 
 ENT.MaxHealth = 75
