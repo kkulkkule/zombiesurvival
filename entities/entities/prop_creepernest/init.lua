@@ -38,8 +38,8 @@ function ENT:BuildUp(premium)
 
 	if self.BuildsThisTick < 3 then
 		self.BuildsThisTick = self.BuildsThisTick + 1
-		local adder = premium and 0.025 or 0
-		self:SetNestHealth(math.min(self:GetNestHealth() + FrameTime() * self:GetNestMaxHealth() * 0.025 + adder, self:GetNestMaxHealth()))
+		local adder = premium and (1 / 30) or 0
+		self:SetNestHealth(math.min(self:GetNestHealth() + FrameTime() * self:GetNestMaxHealth() * (1 / 30) + adder, self:GetNestMaxHealth()))
 	end
 end
 
@@ -55,14 +55,23 @@ function ENT:Think()
 			self:TakeDamage(5)
 		end
 	end
-	for _, v in pairs(ents.FindInSphere(self:LocalToWorld(self:OBBCenter()), 100)) do
-		if v:IsPlayer() and v:Team() == TEAM_ZOMBIE and v:Alive() then
+	for _, v in pairs(ents.FindInSphere(self:LocalToWorld(self:OBBCenter()), 250)) do
+		if v:IsPlayer() and v:Team() == TEAM_ZOMBIE and v:Alive() and v:GetPos():Distance(self:GetPos()) <= 100 then
 			GAMEMODE:PlayerBoost(v, 100, 3)
 			if v:GetZombieClassTable().Boss then
 				continue
 			end
 			local maxhealth = v:GetMaxZombieHealth()
 			v:SetHealth(math.min(maxhealth, v:Health() + 1))
+		end
+		
+		if v:IsPlayer() and v:Team() == TEAM_HUMAN and v:Alive() then
+			local vel = v:GetVelocity()
+			local originalz = vel.z
+			vel.z = 0
+			if vel:Length() >= 300 then
+				v:SetVelocity(-vel * 0.5)
+			end
 		end
 	end
 end

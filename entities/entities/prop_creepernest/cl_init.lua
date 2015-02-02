@@ -117,6 +117,32 @@ function ENT:Draw()
 		end
 		render.EndBeam()
 	end
+	
+	if MySelf:Team() == TEAM_HUMAN then
+		local frametime = FrameTime() * 500
+		local ringtime = (curtime / 2 % 1) ^ 0.5
+		local ringsize = ringtime * 500
+		local beamsize = ringtime * 20
+		local up = self:GetUp()
+		local ang = self:GetForward():Angle()
+		ang.yaw = curtime * 360 % 360
+		local ringpos = self:GetPos() + up * 16
+		local blocked = self.Blocked
+		local a = (1 - ringtime) * 1
+
+		r = 255
+		g = 0
+		colRing.r = r * a
+		colRing.g = g * a
+
+		render.SetMaterial(matBeam)
+		render.StartBeam(19)
+		for i=1, 19 do
+			render.AddBeam(ringpos + ang:Forward() * ringsize, beamsize, beamsize, colRing)
+			ang:RotateAroundAxis(up, 20)
+		end
+		render.EndBeam()
+	end
 
 	if built then
 		render.ModelMaterialOverride(matFlesh)
