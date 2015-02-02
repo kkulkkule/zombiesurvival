@@ -92,8 +92,22 @@ function ENT:Think()
 	self.BaseClass.Think(self)
 end
 
-function ENT:PhysicsCollide(data, ent)
-	if ent:GetClass() == "prop_manhack" or ent:GetClass() == "prop_manhack_saw" then
-		ent:TakeDamage(4, self:GetOwner(), self)
+function ENT:PhysicsCollide(data, phys)
+	local ent = data.HitEntity
+	
+	if IsValid(ent) and ent:GetClass() == "prop_manhack" then
+		ent:TakeDamage(3, self:GetOwner(), self)
+		self:Remove()
 	end
+	
+	if IsValid(ent) and ent:GetClass() == "prop_manhack_saw" then
+		ent:TakeDamage(8, self:GetOwner(), self)
+		self:Remove()
+	end
+	
+	if not self:HitFence(data, phys) then
+		self.PhysicsData = data
+	end
+
+	self:NextThink(CurTime())
 end
