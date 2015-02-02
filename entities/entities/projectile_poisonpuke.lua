@@ -91,3 +91,9 @@ function ENT:Think()
 	end
 	self.BaseClass.Think(self)
 end
+
+function ENT:PhysicsCollide(data, ent)
+	if ent:GetClass() == "prop_manhack" or ent:GetClass() == "prop_manhack_saw" then
+		ent:TakeDamage(4, self:GetOwner(), self)
+	end
+end
