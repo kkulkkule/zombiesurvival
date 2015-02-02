@@ -2285,6 +2285,14 @@ end
 function GM:EntityTakeDamage(ent, dmginfo)
 	local attacker, inflictor = dmginfo:GetAttacker(), dmginfo:GetInflictor()
 	
+	if ent:IsPlayer() then
+		serge = ent:GetSerge()
+		if serge and serge > 0 then
+			dmginfo:SetDamage(math.max(dmginfo:GetDamage() - serge, 0))
+			ent:SetSerge(math.max(0, serge - dmginfo:GetDamage()))
+		end
+	end
+	
 	if ent.lastHolded and ent.lastHolded + 5 >= CurTime() then
 		if IsValid(ent.lastOwner) and ent.lastOwner:Team() == attacker:Team() then
 			dmginfo:SetDamage(0)
