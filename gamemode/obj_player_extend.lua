@@ -491,7 +491,7 @@ function meta:BarricadeGhostingThink()
 end
 
 function meta:ShouldNotCollide(ent)
-	if ent:IsValid() then
+	if IsValid(ent) then
 		if ent:IsPlayer() then
 			return self:Team() == ent:Team() or self.NoCollideAll or ent.NoCollideAll
 		end

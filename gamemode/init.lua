@@ -8,7 +8,7 @@ http://www.noxiousnet.com/
 Further credits displayed by pressing F1 in-game.
 This was my first ever gamemode. A lot of stuff is from years ago and some stuff is very recent.
 
-]]
+]]--
 
 -- CRAFTING AND ITEM IDEAS
 --[[
@@ -922,7 +922,7 @@ function GM:Think()
 				gamemode.Call("SetWaveActive", true)
 			elseif self.BossZombies and not self.PantsMode and not self:IsClassicMode() and not self.ZombieEscape
 			and self.LastBossZombieSpawned ~= wave and wave > 0 and self:GetWaveStart() - 10 <= time and not self.RoundEnded
-			and (self.BossZombiePlayersRequired <= 0 or #player.GetAll() >= self.BossZombiePlayersRequired) then
+			and (#player.GetAll() >= 10 and #team.GetPlayers(TEAM_HUMAN) >= 6) then
 				for i = 1, math.Clamp(math.floor(team.NumPlayers(TEAM_HUMAN) / 6), 1, 5) do
 					self:SpawnBossZombie()
 				end
@@ -2285,11 +2285,11 @@ end
 function GM:EntityTakeDamage(ent, dmginfo)
 	local attacker, inflictor = dmginfo:GetAttacker(), dmginfo:GetInflictor()
 	
-	if ent:IsPlayer() then
-		serge = ent:GetSerge()
+	if IsValid(attacker) and attacker:IsPlayer() and attacker:Team() == TEAM_ZOMBIE and IsValid(ent) and ent:IsPlayer() and ent:Team() == TEAM_HUMAN then
+		local serge = ent:GetSerge()
 		if serge and serge > 0 then
-			dmginfo:SetDamage(math.max(dmginfo:GetDamage() - serge, 0))
-			ent:SetSerge(math.max(0, serge - dmginfo:GetDamage()))
+			local dmg = dmginfo:GetDamage()
+			dmginfo:SetDamage(math.max(dmg - serge, 0))
 		end
 	end
 	
