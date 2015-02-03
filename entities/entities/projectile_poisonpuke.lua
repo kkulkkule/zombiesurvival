@@ -95,14 +95,18 @@ end
 function ENT:PhysicsCollide(data, phys)
 	local ent = data.HitEntity
 	
-	if IsValid(ent) and ent:GetClass() == "prop_manhack" then
-		ent:TakeDamage(3, self:GetOwner(), self)
-		self:Remove()
-	end
+	if IsValid(ent) then
+		if ent.GetClass then
+			if ent:GetClass() == "prop_manhack" then
+				ent:TakeDamage(3, self:GetOwner(), self)
+				self:Remove()
+			end
 	
-	if IsValid(ent) and ent:GetClass() == "prop_manhack_saw" then
-		ent:TakeDamage(8, self:GetOwner(), self)
-		self:Remove()
+			if ent:GetClass() == "prop_manhack_saw" then
+				ent:TakeDamage(8, self:GetOwner(), self)
+				self:Remove()
+			end
+		end
 	end
 	
 	if not self:HitFence(data, phys) then
