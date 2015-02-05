@@ -86,7 +86,7 @@ function ENT:Explode()
 					local vel = ent:GetVelocity()
 					vel.z = 0
 					if vel > 0 then
-						ent:TakeDamage((self.Damage or 1) + math.floor(vel / 400), owner, self)
+						ent:TakeDamage((self.Damage or 1) + math.floor((vel - 400) / 50), owner, self)
 					end
 					ent:SetGroundEntity(NULL)
 					ent:SetVelocity((pos - ent:GetPos()):GetNormal() * math.Max(self.MinPullPower, vel:Length()) * self.PullPowerMul)

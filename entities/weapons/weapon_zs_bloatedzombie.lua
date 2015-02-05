@@ -61,7 +61,7 @@ function SWEP:ShootSiegeball()
 			cone = cone * 0.7
 		end
 		ent.Cone = cone
-		ent.MinPullPower = 0
+		ent.MinPullPower = self.Secondary.MinPullPower or 0
 		ent:SetPos(self.Owner:EyePos() + self.Owner:GetAimVector() * 10)
 	end
 end
