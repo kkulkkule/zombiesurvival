@@ -14,3 +14,4 @@ ENT.ExplodeRadius = 280
 ENT.Damage = 5
 ENT.PullPowerMul = 1.3
 ENT.MinPullPower = 80
+ENT.Cone = nil

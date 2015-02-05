@@ -2105,7 +2105,7 @@ net.Receive("zs_mark_start", function(len)
 end)
 
 net.Receive("zs_mark_failed", function(len)
-  MsgC(Color(255, 0, 0), "마킹 실패: " .. CurTime() .. "\n")
+	MsgC(Color(255, 0, 0), "마킹 실패: " .. CurTime() .. "\n")
 end)
 -- Temporary fix
 function render.DrawQuadEasy(pos, dir, xsize, ysize, color, rotation)
@@ -2122,4 +2122,53 @@ function render.DrawQuadEasy(pos, dir, xsize, ysize, color, rotation)
 	local rightoffset = ang:Right() * xsize
 
 	render.DrawQuad(pos - upoffset - rightoffset, pos - upoffset + rightoffset, pos + upoffset + rightoffset, pos + upoffset - rightoffset, color)
+end
+
+net.Receive("SpawnCustomNest", function(len)
+	local nests = net.ReadTable()
+	if istable(nests) then
+		GAMEMODE:SpawnCustomNest(nests)
+	end
+end)
+
+function GM:SpawnCustomNest(nests)
+	if self.SpawnCustomNestFrame then
+		if IsValid(self.SpawnCustomNestFrame) then
+			self.SpawnCustomNestFrame:Close()
+		end
+		self.SpawnCustomNestFrame = nil
+	end
+	
+	local scrw, scrh = ScrW(), ScrH()
+	local width, height = 400, 711
+	
+	local frame = vgui.Create("DFrame")
+	frame:SetPos(scrw / 2 - width / 2, scrh / 2 - height / 2)
+	frame:SetSize(width, height)
+	frame:SetTitle("Spawn in this nest.")
+	frame:SetDraggable(false)
+	frame:MakePopup()
+	
+	frame.buttons = {}
+	if #nests >= 1 then
+		for i, v in pairs(nests) do
+			local button = vgui.Create("DButton", frame)
+			button:SetPos(0, 25 * i + 10)
+			button:CenterHorizontal()
+			button:SetText("Nest " .. tostring(i))
+			button.DoClick = function()
+				net.Start("SpawnCustomNest")
+					net.WriteEntity(v)
+				net.SendToServer()
+			end
+			
+			frame.buttons[i] = button
+		end
+	else
+		chat.AddText("There's no nest.")
+		frame:Close()
+		frame = nil
+	end
+
+	self.SpawnCustomNestFrame = frame
 end

@@ -10,6 +10,7 @@ function ENT:Initialize()
 	self:SetMoveType(MOVETYPE_VPHYSICS)
 	self:SetSolid(SOLID_VPHYSICS)
 	self.DeathTime = CurTime() + self.LifeTime
+	self.Cone = Vector(math.Rand(-0.01, 0.01), math.Rand(-0.01, 0.01), math.Rand(-0.01, 0.01))
 	-- self:SetTrigger(true)
 end
 
@@ -30,7 +31,7 @@ function ENT:GetShootTime()
 	return self.ShootTime or -1
 end
 
-function ENT:Shoot(dir)	
+function ENT:Shoot(dir, cone)	
 	local phys = self:GetPhysicsObject()
 	if IsValid(phys) then
 		phys:SetMass(1)
@@ -40,7 +41,7 @@ function ENT:Shoot(dir)
 	end
 	local dir = dir
 	if !dir then
-		dir = self.Owner:GetAimVector()		
+		dir = self.Owner:GetAimVector() + (cone and cone or Vector(0, 0, 0))
 	end
 	-- local phys = self:GetPhysicsObject()
 	-- phys:SetVelocity(dir * self.ShootPower)
@@ -65,7 +66,7 @@ function ENT:Think()
 	
 	local shoottime = self:GetShootTime()
 	if shoottime <= curtime and shoottime != -1 then
-		self:Shoot()
+		self:Shoot(dir, self.Cone)
 		self:SetShootTime(-1)
 	elseif !self.Shooted then
 		self:SetPos(self:GetOwner():EyePos() + self:GetOwner():GetAimVector() * 10)

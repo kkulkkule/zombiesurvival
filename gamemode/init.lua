@@ -389,6 +389,7 @@ end
 function GM:AddNetworkStrings()
 	util.AddNetworkString("afkkick")
 	util.AddNetworkString("localvoice")
+	util.AddNetworkString("SpawnCustomNest")
 	util.AddNetworkString("zs_mark_start")
 	util.AddNetworkString("zs_mark_failed")
 	util.AddNetworkString("zs_gamestate")
@@ -2260,6 +2261,29 @@ function GM:PlayerDeathThink(pl)
 				pl:Spectate(OBS_MODE_CHASE)
 				pl:SpectateEntity(specplayer)
 			end
+		elseif pl:KeyPressed(IN_SPEED) then
+			pl.SpectatedPlayerKey = (pl.SpectatedPlayerKey or 0) + 1
+
+			local nests = {}
+			for _, v in pairs(ents.FindByClass("prop_creepernest")) do
+				if v:GetNestBuilt() then table.insert(nests, v) end
+			end
+
+			pl:StripWeapons()
+
+			if pl.SpectatedPlayerKey > #nests then
+				pl.SpectatedPlayerKey = 1
+			end
+			
+			net.Start("SpawnCustomNest")
+				net.WriteTable(nests)
+			net.Send(pl)
+			
+			-- local specplayer = nests[pl.SpectatedPlayerKey]
+			-- if specplayer then
+				-- pl:Spectate(OBS_MODE_CHASE)
+				-- pl:SpectateEntity(specplayer)
+			-- end
 		elseif pl:KeyPressed(IN_JUMP) then
 			pl:Spectate(OBS_MODE_ROAMING)
 			pl:SpectateEntity(NULL)
@@ -4111,6 +4135,15 @@ net.Receive("afkkick", function(len, pl)
 		return
 	end
 	ulx.kick(NULL, pl, "AFK")
+end)
+
+net.Receive("SpawnCustomNest", function(len, pl)
+	local nest = net.ReadEntity()
+	if !nest or !IsValid(nest) then
+		return
+	end
+	pl:Spectate(OBS_MODE_CHASE)
+	pl:SpectateEntity(nest)
 end)
 
 
