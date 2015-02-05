@@ -83,9 +83,11 @@ function ENT:Explode()
 			local nearest = ent:NearestPoint(pos)
 			if TrueVisibleFilters(pos, nearest, self, ent) then
 				if IsValid(ent) and ent:IsPlayer() and ent:Team() != self.Team then
-					ent:TakeDamage(self.Damage or 1, owner, self)
 					local vel = ent:GetVelocity()
 					vel.z = 0
+					if vel > 0 then
+						ent:TakeDamage((self.Damage or 1) + math.floor(vel / 400), owner, self)
+					end
 					ent:SetGroundEntity(NULL)
 					ent:SetVelocity((pos - ent:GetPos()):GetNormal() * math.Max(self.MinPullPower, vel:Length()) * self.PullPowerMul)
 				end

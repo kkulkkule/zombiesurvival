@@ -13,6 +13,7 @@ SWEP.Primary.Delay = 1.5
 SWEP.Secondary.Delay = 8
 SWEP.Secondary.Cone = 0.085
 SWEP.Secondary.Damage = 1
+SWEP.Secondary.MinPullPower = 0
 
 SWEP.LastAlert = 0
 
@@ -60,6 +61,7 @@ function SWEP:ShootSiegeball()
 			cone = cone * 0.7
 		end
 		ent.Cone = cone
+		ent.MinPullPower = 0
 		ent:SetPos(self.Owner:EyePos() + self.Owner:GetAimVector() * 10)
 	end
 end
