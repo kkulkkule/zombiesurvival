@@ -913,6 +913,7 @@ function GM:ZombieObserverHUD(obsmode)
 	draw_SimpleTextBlur(translate.Get("press_rmb_to_cycle_targets"), "ZSHUDFontSmall", w * 0.5, h * 0.75 + space, COLOR_DARKRED, TEXT_ALIGN_CENTER)
 	draw_SimpleTextBlur(translate.Get("press_reload_to_spawn_at_normal_point"), "ZSHUDFontSmall", w * 0.5, h * 0.75 + space * 2, COLOR_DARKRED, TEXT_ALIGN_CENTER)
 	draw_SimpleTextBlur(translate.Get("press_jump_to_free_roam"), "ZSHUDFontSmall", w * 0.5, h * 0.75 + space * 3, COLOR_DARKRED, TEXT_ALIGN_CENTER)
+	draw_SimpleTextBlur(translate.Get("press_speed_to_free_roam"), "ZSHUDFontSmall", w * 0.5, h * 0.75 + space * 4, COLOR_DARKRED, TEXT_ALIGN_CENTER)
 
 	for _, ent in pairs(ents.FindByClass("prop_thrownbaby")) do
 		if ent:GetSettled() then
