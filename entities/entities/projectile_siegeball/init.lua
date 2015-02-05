@@ -50,15 +50,21 @@ function ENT:Shoot(dir, cone)
 end
 
 function ENT:PhysicsCollide(colData, collider)
-	self:Explode()
+	if colData.HitEntity:GetClass() != "projectile_siegeball" then
+		self:Explode()
+	end
 end
 
 function ENT:ShouldNotCollide(ent)
-	return (ent:IsPlayer() and ent:Team() == self.Team) or ent == self
+	return (ent:IsPlayer() and ent:Team() == self.Team) or ent == self or ent:GetClass() == "projectile_siegeball"
 end
 
 function ENT:Think()
 	local curtime = CurTime()
+	
+	if !self:GetOwner() or !IsValid(self:GetOwner()) then
+		self:Explode()
+	end
 	
 	if self.DeathTime <= curtime then
 		self:Explode()
@@ -81,12 +87,12 @@ function ENT:Explode()
 	for _, ent in pairs(ents.FindInSphere(pos, radius)) do
 		if ent and ent:IsValid() then
 			local nearest = ent:NearestPoint(pos)
-			if TrueVisibleFilters(pos, nearest, self, ent) then
+			if TrueVisibleFilters(pos, nearest, self, ent, owner) then
 				if IsValid(ent) and ent:IsPlayer() and ent:Team() != self.Team then
 					local vel = ent:GetVelocity()
 					vel.z = 0
-					if vel > 0 then
-						ent:TakeDamage((self.Damage or 1) + math.floor((vel - 400) / 50), owner, self)
+					if vel:Length() > 0 then
+						ent:TakeDamage((self.Damage or 1) + math.floor((vel:Length() - 400) / 50), (IsValid(owner) and owner or NULL), self)
 					end
 					ent:SetGroundEntity(NULL)
 					ent:SetVelocity((pos - ent:GetPos()):GetNormal() * math.Max(self.MinPullPower, vel:Length()) * self.PullPowerMul)
@@ -100,7 +106,7 @@ function ENT:Explode()
 	effectdata:SetOrigin( vPoint )
 	effectdata:SetScale(500)
 	effectdata:SetMagnitude(200)
-	effectdata:SetNormal(self:GetOwner():GetAimVector())
+	effectdata:SetNormal(IsValid(owner) and owner:GetAimVector() or VectorRand())
 	util.Effect( "siegeball", effectdata )
 	self:Remove()
 end
