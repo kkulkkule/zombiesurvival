@@ -12,6 +12,7 @@ SWEP.MeleeForceScale = 1.25
 SWEP.Primary.Delay = 1.5
 SWEP.Secondary.Delay = 8
 SWEP.Secondary.Cone = 0.085
+SWEP.Secondary.Damage = 1
 
 SWEP.LastAlert = 0
 
@@ -51,6 +52,7 @@ function SWEP:ShootSiegeball()
 		local ent = ents.Create("projectile_siegeball")
 		ent:SetOwner(self.Owner)
 		ent:SetShootTime(CurTime() + 1)
+		ent.Damage = self.Secondary.Damage or 1
 		ent:Spawn()
 		local aimvec = self.Owner:GetAimVector()
 		local cone = Vector(math.Rand(self.Secondary.Cone, -self.Secondary.Cone), math.Rand(self.Secondary.Cone, -self.Secondary.Cone), math.Rand(self.Secondary.Cone, -self.Secondary.Cone))
