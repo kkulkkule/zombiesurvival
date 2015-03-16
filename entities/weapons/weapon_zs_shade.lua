@@ -28,7 +28,7 @@ function SWEP:Think()
 				self:ChangeMagneticForce()
 			end
 		else
-			self.MagneticForce = self:GetNetworkedVar("MagneticForce") or -1
+			self.MagneticForce = self:GetNWInt("MagneticForce") or -1
 		end
 		self.MagneticForceMax = self.Owner:GetPremium() and 1400 or 1000 
 		NextThink = curtime + 0.5
@@ -41,7 +41,7 @@ function SWEP:ChangeMagneticForce()
 	else
 		self.MagneticForce = self.MagneticForce + 100
 	end
-	self:SetNetworkedVar("MagneticForce", self.MagneticForce)
+	self:SetNWInt("MagneticForce", self.MagneticForce)
 end
 
 function SWEP:PrimaryAttack()

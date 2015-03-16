@@ -369,7 +369,7 @@ end
 function GM:Move(pl, move)
 	local premium = pl:GetPremium()
 	local mul = premium and 1.1 or 1
-	local dsmul = pl:GetNetworkedVar("ds_spdMul") or 1
+	local dsmul = pl:GetNWFloat("ds_spdMul") or 1
 	if pl:Team() == TEAM_HUMAN then
 		if pl:GetBarricadeGhosting() then
 			move:SetMaxSpeed(36 * (premium and 3.5 or 1))

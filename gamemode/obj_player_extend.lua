@@ -162,67 +162,67 @@ function meta:GetPalsy()
 end
 
 function meta:SetRecoil(b)
-	self:SetNetworkedVar("Recoil", b)
+	self:SetNWBool("Recoil", b)
 end
 
 function meta:GetRecoil(b)
-	return self:GetNetworkedVar("Recoil")
+	return self:GetNWBool("Recoil")
 end
 
 function meta:SetTacticalLight(b)
-	self:SetNetworkedVar("TacticalLight", b)
+	self:SetNWBool("TacticalLight", b)
 end
 
 function meta:GetTacticalLight(b)
-	return self:GetNetworkedVar("TacticalLight")
+	return self:GetNWBool("TacticalLight")
 end
 
 function meta:SetLaserSight(b)
-	self:SetNetworkedVar("LaserSight", b)
+	self:SetNWBool("LaserSight", b)
 end
 
 function meta:GetLaserSight(b)
-	return self:GetNetworkedVar("LaserSight")
+	return self:GetNWBool("LaserSight")
 end
 
 function meta:SetHunterCharge(b)
-	self:SetNetworkedVar("HunterCharge", b)
+	self:SetNWBool("HunterCharge", b)
 end
 
 function meta:GetCompensator(b)
-    return self:GetNetworkedVar("Compensator")
+    return self:GetNWBool("Compensator")
 end
 
 function meta:SetCompensator(b)
-    self:SetNetworkedVar("Compensator", b)
+    self:SetNWBool("Compensator", b)
 end
 
 function meta:GetPistolGrip(b)
-    return self:GetNetworkedVar("PistolGrip")
+    return self:GetNWBool("PistolGrip")
 end
 
 function meta:SetPistolGrip(b)
-    self:SetNetworkedVar("PistolGrip", b)
+    self:SetNWBool("PistolGrip", b)
 end
 
 function meta:GetHeavyBarrel(b)
-    return self:GetNetworkedVar("HeavyBarrel")
+    return self:GetNWBool("HeavyBarrel")
 end
 
 function meta:SetHeavyBarrel(b)
-    self:SetNetworkedVar("HeavyBarrel", b)
+    self:SetNWBool("HeavyBarrel", b)
 end
 
 function meta:GetHunterCharge(b)
-	return self:GetNetworkedVar("HunterCharge")
+	return self:GetNWBool("HunterCharge")
 end
 
 function meta:SetCNanoHammer(b)
-    self:SetNetworkedVar("CNanoHammer", b)
+    self:SetNWBool("CNanoHammer", b)
 end
 
 function meta:GetCNanoHammer(b)
-    return self:GetNetworkedVar("CNanoHammer")
+    return self:GetNWBool("CNanoHammer")
 end
 function meta:SetHemophilia(onoff, nosend)
 	self.m_Hemophilia = onoff
@@ -936,9 +936,9 @@ function meta:GetRight()
 end
 
 function meta:GetSerge()
-	return self:GetNetworkedVar("Serge")
+	return self:GetNWBool("Serge")
 end
 
-function meta:SetSerge(b)
-	return self:SetNetworkedVar("Serge", b)
+function meta:SetSerge(f)
+	return self:SetNWFloat("Serge", f)
 end

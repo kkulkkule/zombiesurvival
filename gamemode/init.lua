@@ -3759,12 +3759,12 @@ function GM:ProcessDeathStreak(pl)
 	if ds >= 10 then
 		self:PlayerBoost(pl, 200, 5)
 	end
-	pl:SetNetworkedVar("ds_dmgMul", pl.ds_dmgMul)
-	pl:SetNetworkedVar("ds_spdMul", pl.ds_spdMul)
+	pl:SetNWFloat("ds_dmgMul", pl.ds_dmgMul)
+	pl:SetNWFloat("ds_spdMul", pl.ds_spdMul)
 	timer.Create("ResetDSSet" .. pl:UniqueID(), 10, 1, function()
 		if IsValid(pl) then
-			pl:SetNetworkedVar("ds_dmgMul", 1)
-			pl:SetNetworkedVar("ds_spdMul", 1)
+			pl:SetNWFloat("ds_dmgMul", 1)
+			pl:SetNWFloat("ds_spdMul", 1)
 		end
 	end)
 end
